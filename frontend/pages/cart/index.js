@@ -32,9 +32,6 @@ function renderCart() {
       <div class="card" style="margin-bottom:16px">
         <h2 style="font-size:18px;font-weight:700;margin-bottom:12px">🛒 ตะกร้าสินค้า</h2>
         <div class="empty"><div class="empty-icon">🛒</div>ตะกร้าว่างเปล่า</div>
-        <a href="../Stores pages/index.html">
-          <button class="btn btn-green" style="margin-top:12px">กลับไปเลือกสินค้า</button>
-        </a>
       </div>`
     return
   }
