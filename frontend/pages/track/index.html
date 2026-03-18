@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ติดตามออเดอร์ — MyShop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/styles.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <span class="navbar-logo" onclick="location.href='../Stores pages/index.html'">🛍️ MyShop</span>
+    <div class="navbar-actions">
+      <a href="../Stores pages/index.html"><button class="btn btn-blue">← กลับ</button></a>
+    </div>
+  </nav>
+  <div class="container-sm">
+    <h1 style="font-size:20px;font-weight:700;margin-bottom:4px">ติดตามออเดอร์</h1>
+    <p style="color:#888;font-size:14px;margin-bottom:16px">กรอกรหัสออเดอร์เพื่อดูสถานะ</p>
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <input id="track-input" placeholder="เช่น ORD001"
+        style="flex:1;border:1px solid #d1d5db;border-radius:8px;padding:9px 12px;font-size:14px;outline:none;font-family:inherit" />
+      <button class="btn btn-blue" onclick="doTrack()" style="white-space:nowrap">ค้นหา</button>
+    </div>
+    <div id="track-result"></div>
+  </div>
+  <script src="../../assets/js/api.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
