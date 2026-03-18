@@ -1,18 +1,40 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ร้านค้า</title>
-    <link rel="stylesheet" href="../../assets/css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ร้านค้า — MyShop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/styles.css" />
 </head>
 <body>
-    <nav>
-        <a href="../../index.html" class="active">หน้าหลัก</a>
-        <a href="../login/index.html">เข้าสู่ระบบ</a>
-        <a href="../register/index.html">สมัครสมาชิก</a>
-        <a href="../cart/index.html">ตะกร้าสินค้า</a>
-        <a 
-    </nav>
+
+  <nav class="navbar">
+    <span class="navbar-logo" onclick="location.href='index.html'">🛍️ MyShop</span>
+    <div class="navbar-actions">
+      <a href="../track/index.html"><button class="btn btn-blue">ติดตามออเดอร์</button></a>
+      <a href="../cart/index.html"><button class="btn btn-blue">🛒ตะกร้า<span id="cart-count"></span></button></a>
+      <!-- ถ้า login แล้วแสดง dropdown, ถ้ายังไม่ login แสดงปุ่ม -->
+      <div id="auth-area"></div>
+      <a href="../admin/index.html"><button class="btn btn-blue">แอดมิน</button></a>
+    </div>
+  </nav>
+
+  <!-- welcome banner (ซ่อนไว้ก่อน) -->
+  <div id="welcome-banner" class="alert alert-green container" style="display:none">
+    👋 สวัสดี <strong id="welcome-name"></strong> ยินดีต้อนรับกลับมา
+  </div>
+
+  <div class="container">
+    <h1 style="font-size:22px;font-weight:700;margin-bottom:4px">สินค้าทั้งหมด</h1>
+    <p style="color:#888;font-size:14px;margin-bottom:20px">เลือกสินค้าที่ชอบแล้วใส่ตะกร้าได้เลย</p>
+    <div class="product-grid" id="product-grid">
+      <div class="loading">⏳ กำลังโหลดสินค้า...</div>
+    </div>
+  </div>
+
+  <script src="../../assets/js/api.js"></script>
+  <script src="index.js"></script>
 </body>
 </html>
