@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>สมัครสมาชิก — MyShop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/styles.css" />
+  <style>
+    body { display:flex; flex-direction:column; min-height:100vh }
+    .register-wrap { flex:1; display:flex; align-items:center; justify-content:center; padding:24px 16px }
+    .register-box { background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:32px 28px; width:100%; max-width:380px; box-shadow:0 4px 24px rgba(0,0,0,0.06) }
+    .inp-style { border:1px solid #d1d5db; border-radius:8px; padding:9px 12px; width:100%; font-size:14px; font-family:inherit; outline:none; box-sizing:border-box }
+    .inp-style:focus { border-color:#3b82f6 }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <span class="navbar-logo" onclick="location.href='../Stores pages/index.html'">🛍️ MyShop</span>
+    <div class="navbar-actions">
+      <a href="../Stores pages/index.html"><button class="btn btn-blue">← กลับร้านค้า</button></a>
+    </div>
+  </nav>
+
+  <div class="register-wrap">      
+    <div class="register-box">         
+
+      <div style="text-align:center;font-size:32px;margin-bottom:4px">✨</div>
+      <div style="text-align:center;font-weight:700;font-size:20px;margin-bottom:4px">สมัครสมาชิก</div>
+      <div style="text-align:center;font-size:13px;color:#888;margin-bottom:24px">
+        มีบัญชีแล้ว? <a href="../login/index.html" style="color:#1d4ed8;font-weight:600">เข้าสู่ระบบ</a>
+      </div>
+
+      <!-- แสดง error / success -->
+      <div id="err-msg" style="color:#ef4444;font-size:13px;margin-bottom:10px;display:none"></div>
+      <div id="ok-msg" style="background:#ecfdf5;border:1px solid #6ee7b7;border-radius:8px;padding:10px;color:#065f46;font-size:13px;margin-bottom:10px;display:none"></div>
+
+      <!-- ฟอร์ม -->
+      <div class="form-group">
+        <div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:4px">ชื่อ-นามสกุล *</div>
+          <input id="name" class="inp-style" type="text" placeholder="เช่น สมชาย แซ่ตั้ง" />
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:4px">อีเมล *</div>
+          <input id="email" class="inp-style" type="email" placeholder="example@email.com" />
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:4px">เบอร์โทรศัพท์</div>
+          <input id="phone" class="inp-style" type="tel" placeholder="08X-XXX-XXXX" />
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:4px">รหัสผ่าน * (อย่างน้อย 6 ตัว)</div>
+          <input id="password" class="inp-style" type="password" placeholder="รหัสผ่าน" />
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:4px">ยืนยันรหัสผ่าน *</div>
+          <input id="confirm" class="inp-style" type="password" placeholder="พิมพ์รหัสผ่านอีกครั้ง" />
+        </div>
+        <button class="btn btn-green" id="register-btn" onclick="handleRegister()" style="width:auto; display:block; margin:0 auto">สมัครสมาชิก</button>
+
+        <div style="text-align:center;font-size:12px;color:#aaa">
+          มีบัญชีแล้ว? <a href="../login/index.html" style="color:#1d4ed8">เข้าสู่ระบบ</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../../assets/js/api.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
