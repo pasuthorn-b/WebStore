@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>เข้าสู่ระบบ — MyShop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/styles.css" />
+  <style>
+    body{display:flex;flex-direction:column;min-height:100vh}
+    .login-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:24px 16px}
+    .login-box{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:32px 28px;width:100%;max-width:380px;box-shadow:0 4px 24px rgba(0,0,0,0.06)}
+    .inp-style{border:1px solid #d1d5db;border-radius:8px;padding:9px 12px;width:100%;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box}
+    .inp-style:focus{border-color:#3b82f6}
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <span class="navbar-logo" onclick="location.href='../Stores pages/index.html'">🛍️ MyShop</span>
+    <div class="navbar-actions">
+      <a href="../Stores pages/index.html"><button class="btn btn-blue">← กลับร้านค้า</button></a>
+    </div>
+  </nav>
+  <div class="login-wrap">
+    <div class="login-box">
+      <div style="text-align:center;font-size:32px;margin-bottom:4px">🔑</div>
+      <div style="text-align:center;font-weight:700;font-size:20px;margin-bottom:4px">เข้าสู่ระบบ</div>
+      <div style="text-align:center;font-size:13px;color:#888;margin-bottom:24px">
+        ยังไม่มีบัญชี?
+        <a href="../register/index.html" style="color:#1d4ed8;font-weight:600">สมัครสมาชิก</a>
+      </div>
+      <div class="form-group">
+        <div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:4px">Email</div>
+          <input id="email" class="inp-style" type="email" placeholder="example@email.com" />
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:4px">Password</div>
+          <input id="password" class="inp-style" type="password" placeholder="รหัสผ่าน" />
+        </div>
+        <div id="err-msg" style="text-align:center;margin-top:12px;color:#ef4444;font-size:13px;display:none"></div>
+        <button class="btn btn-green" id="login-btn" onclick="handleLogin()" style="width:auto; display:block; margin:0 auto">เข้าสู่ระบบ</button>
+      </div>
+    </div>
+  </div>
+  <script src="../../assets/js/api.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
