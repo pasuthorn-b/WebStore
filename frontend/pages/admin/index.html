@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>แอดมิน — MyShop</title>
+</head>
+<body>
+  <script src="../../assets/js/api.js"></script>
+  <script>
+    const user = JSON.parse(localStorage.getItem("user") || "null")
+    if (!user || user.role !== "admin") {
+      location.href = "./login_admin/login_ad.html"
+    } else {
+      location.href = "./orders/orders.html"
+    }
+  </script>
+</body>
+</html>

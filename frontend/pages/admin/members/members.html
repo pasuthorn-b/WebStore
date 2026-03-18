@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>สมาชิก — แอดมิน</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../assets/css/style.css" />
+  <style>
+    .stat-grid   { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; margin-bottom:20px }
+    .stat-card   { background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; text-align:center }
+    .stat-num    { font-size:22px; font-weight:700; margin-bottom:4px }
+    .stat-lbl    { font-size:12px; color:#888 }
+    .mem-grid    { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:14px }
+    .mem-card    { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:16px }
+    .inp         { border:1px solid #d1d5db; border-radius:8px; padding:8px 12px; font-size:13px; font-family:inherit; outline:none }
+    .inp:focus   { border-color:#3b82f6 }
+  </style>
+</head>
+<body>
+  <nav class="navbar"></nav>
+
+  <div class="container">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+      <h1 style="font-size:20px;font-weight:700">👥 สมาชิกทั้งหมด</h1>
+      <input id="search-mem" class="inp" placeholder="🔍 ค้นหาชื่อ / อีเมล" style="width:220px" oninput="filterMembers()" />
+    </div>
+
+    <div class="stat-grid" id="member-stats"></div>
+    <div class="mem-grid" id="members-list">
+      <div class="loading">⏳ กำลังโหลด...</div>
+    </div>
+  </div>
+  <script src="../../../assets/js/mock-data.js"></script>
+  <script src="../../../assets/js/api.js"></script>
+  <script src="../../../assets/js/admin-common.js"></script>
+  <script src="members.js"></script>
+</body>
+</html>

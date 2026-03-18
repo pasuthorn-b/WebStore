@@ -6,6 +6,8 @@ async function handleLogin() {
   const errEl    = document.getElementById("err-msg")
   const btn      = document.getElementById("login-btn")
 
+  console.log("handleLogin called")
+
   if (!email || !password) {
     errEl.textContent = "กรุณากรอกอีเมลและรหัสผ่าน"
     errEl.style.display = "block"

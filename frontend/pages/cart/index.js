@@ -39,7 +39,7 @@ function renderCart() {
   const itemsHtml = cart.map(item => `
     <div style="display:flex;align-items:center;justify-content:space-between;
       padding:12px 0;border-bottom:1px solid #f3f4f6">
-      <div style="display:flex;align-items:center;gap:12px">
+      <div style="display:flex;align-items:center;gap:12px;flex:1">
         <div style="width:44px;height:44px;border-radius:8px;background:#f9fafb;
           display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">
           ${item.img.startsWith("http")
@@ -48,11 +48,20 @@ function renderCart() {
         </div>
         <div>
           <div style="font-weight:600;font-size:14px">${item.name}</div>
-          <div style="font-size:12px;color:#888">฿${item.price.toLocaleString()} × ${item.qty}</div>
+          <div style="font-size:12px;color:#888">฿${item.price.toLocaleString()}</div>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <strong style="font-size:14px">฿${(item.price * item.qty).toLocaleString()}</strong>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button onclick="updateQty(${item.id}, -1)"
+          style="background:#f3f4f6;border:none;border-radius:6px;width:28px;height:28px;
+          cursor:pointer;font-weight:600;font-size:16px">−</button>
+        <span style="width:30px;text-align:center;font-weight:600">${item.qty}</span>
+        <button onclick="updateQty(${item.id}, 1)"
+          style="background:#f3f4f6;border:none;border-radius:6px;width:28px;height:28px;
+          cursor:pointer;font-weight:600;font-size:16px">+</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-left:12px">
+        <strong style="font-size:14px;min-width:70px;text-align:right">฿${(item.price * item.qty).toLocaleString()}</strong>
         <button onclick="removeItem(${item.id})"
           style="background:none;border:none;cursor:pointer;color:#ef4444;font-size:18px">✕</button>
       </div>
@@ -63,6 +72,7 @@ function renderCart() {
     <div class="card" style="margin-bottom:16px">
       <h2 style="font-size:18px;font-weight:700;margin-bottom:4px">🛒 ตะกร้าสินค้า</h2>
       ${itemsHtml}
+
       <div style="text-align:right;font-weight:700;font-size:17px;margin-top:12px">
         รวม: ฿${total.toLocaleString()}
       </div>
@@ -97,6 +107,17 @@ function renderCart() {
 // ── ลบสินค้าออกจากตะกร้า ─────────────────────────────────────
 function removeItem(id) {
   let cart = getCart().filter(x => x.id !== id)
+  saveCart(cart)
+  renderCart()
+}
+
+// ── เปลี่ยนจำนวนสินค้า ────────────────────────────────────────
+function updateQty(id, delta) {
+  let cart = getCart()
+  const item = cart.find(x => x.id === id)
+  if (item) {
+    item.qty = Math.max(1, item.qty + delta)
+  }
   saveCart(cart)
   renderCart()
 }

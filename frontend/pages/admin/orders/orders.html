@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ออเดอร์ — แอดมิน</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../assets/css/style.css" />
+  <style>
+    .stat-grid  { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; margin-bottom:20px }
+    .stat-card  { background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; text-align:center }
+    .stat-num   { font-size:22px; font-weight:700; margin-bottom:4px }
+    .stat-lbl   { font-size:12px; color:#888 }
+    .order-card { background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; margin-bottom:12px }
+    .status-btn { font-size:12px; padding:4px 10px; border-radius:20px; cursor:pointer; font-weight:600; font-family:inherit; transition:all 0.15s }
+    .filter-bar { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; align-items:center }
+    .inp        { border:1px solid #d1d5db; border-radius:8px; padding:8px 12px; font-size:13px; font-family:inherit; outline:none }
+    .inp:focus  { border-color:#3b82f6 }
+  </style>
+</head>
+<body>
+  <nav class="navbar"></nav>
+
+  <div class="container">
+    <h1 style="font-size:20px;font-weight:700;margin-bottom:16px">📋 ออเดอร์ทั้งหมด</h1>
+
+    <!-- Stats -->
+    <div class="stat-grid" id="order-stats"></div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <input id="search-order" class="inp" placeholder="🔍 ค้นหา ชื่อ / รหัสออเดอร์" style="flex:1;min-width:180px" oninput="filterOrders()" />
+      <select id="filter-status" class="inp" onchange="filterOrders()">
+        <option value="">ทุกสถานะ</option>
+        <option>รอยืนยัน</option>
+        <option>กำลังเตรียม</option>
+        <option>จัดส่งแล้ว</option>
+        <option>สำเร็จ</option>
+        <option>ยกเลิก</option>
+      </select>
+    </div>
+
+    <div id="orders-list">
+      <div class="loading">⏳ กำลังโหลด...</div>
+    </div>
+  </div>
+  <script src="../../../assets/js/mock-data.js"></script>
+  <script src="../../../assets/js/api.js"></script>
+  <script src="../../../assets/js/admin-common.js"></script>
+  <script src="orders.js"></script>
+</body>
+</html>

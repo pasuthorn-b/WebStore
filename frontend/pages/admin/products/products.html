@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>สินค้า — แอดมิน</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/style.css" />
+  <style>
+    .section   { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:20px; margin-bottom:20px }
+    .grid2     { display:grid; grid-template-columns:1fr 1fr; gap:10px }
+    .prod-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(185px,1fr)); gap:14px }
+    .prod-card { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:14px; display:flex; flex-direction:column; gap:8px }
+    .inp       { border:1px solid #d1d5db; border-radius:8px; padding:9px 12px; width:100%; font-size:14px; font-family:inherit; outline:none; box-sizing:border-box }
+    .inp:focus { border-color:#3b82f6 }
+    .lbl       { font-size:13px; font-weight:600; margin-bottom:4px; display:block }
+    .img-preview { width:100%; max-height:160px; object-fit:cover; border-radius:8px; display:block }
+    .upload-area {
+      border: 2px dashed #d1d5db; border-radius:10px; padding:24px;
+      text-align:center; cursor:pointer; background:#fafafa; transition:all 0.15s
+    }
+    .upload-area:hover { border-color:#3b82f6; background:#eff6ff }
+  </style>
+</head>
+<body>
+  <nav class="navbar"></nav>
+
+  <div class="container">
+
+    <!-- ฟอร์มเพิ่ม/แก้ไข -->
+    <div class="section">
+      <h2 class="lbl" id="form-title" style="font-size:16px;margin-bottom:14px">➕ เพิ่มสินค้าใหม่</h2>
+      <div class="grid2" style="margin-bottom:10px">
+        <div>
+          <label class="lbl">ชื่อสินค้า *</label>
+          <input id="p-name" class="inp" placeholder="ชื่อสินค้า" />
+        </div>
+        <div>
+          <label class="lbl">ราคา (฿) *</label>
+          <input id="p-price" class="inp" type="number" placeholder="ราคา" min="0" />
+        </div>
+        <div>
+          <label class="lbl">สต็อก</label>
+          <input id="p-stock" class="inp" type="number" placeholder="จำนวน" min="0" />
+        </div>
+        <div>
+          <label class="lbl">หมวดหมู่</label>
+          <input id="p-cat" class="inp" placeholder="เช่น กระเป๋า, แก้วน้ำ" />
+        </div>
+      </div>
+
+      <div style="margin-bottom:10px">
+        <label class="lbl">รายละเอียด</label>
+        <textarea id="p-desc" class="inp" placeholder="รายละเอียดสินค้า" style="min-height:70px;resize:vertical"></textarea>
+      </div>
+
+      <!-- อัปโหลดรูป -->
+      <div style="margin-bottom:14px">
+        <label class="lbl">รูปสินค้า *</label>
+        <div class="upload-area" id="upload-area" onclick="document.getElementById('p-img').click()">
+          <div id="upload-placeholder">
+            <div style="font-size:36px;margin-bottom:8px">🖼️</div>
+            <div style="font-size:13px;color:#666;font-weight:600">คลิกเพื่อเลือกรูปภาพ</div>
+            <div style="font-size:11px;color:#aaa;margin-top:4px">JPG, PNG, WEBP ขนาดไม่เกิน 5MB</div>
+          </div>
+          <img id="img-preview" class="img-preview" style="display:none" />
+        </div>
+        <input id="p-img" type="file" accept="image/*" style="display:none" onchange="previewImg()" />
+        <button id="clear-img-btn" onclick="clearImg()" style="display:none;margin-top:6px;font-size:12px;color:#ef4444;background:none;border:none;cursor:pointer">✕ เอารูปออก</button>
+      </div>
+
+      <div id="form-err" style="display:none;color:#ef4444;font-size:13px;background:#fee2e2;border-radius:8px;padding:8px 12px;margin-bottom:10px"></div>
+
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-green" id="save-btn" onclick="saveProduct()">บันทึกสินค้า</button>
+        <button class="btn" id="cancel-btn" style="display:none" onclick="cancelEdit()">ยกเลิก</button>
+      </div>
+    </div>
+
+    <!-- รายการสินค้า -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h2 style="font-size:16px;font-weight:700">สินค้าทั้งหมด</h2>
+      <input id="search-prod" class="inp" placeholder="🔍 ค้นหาสินค้า..." style="width:200px" oninput="filterProducts()" />
+    </div>
+    <div class="prod-grid" id="products-list">
+      <div class="loading">⏳ กำลังโหลด...</div>
+    </div>
+
+  </div>
+  <script src="../../../assets/js/mock-data.js"></script>
+  <script src="../../../assets/js/api.js"></script>
+  <script src="../../../assets/js/admin-common.js"></script>
+  <script src="products.js"></script>
+</body>
+</html>

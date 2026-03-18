@@ -25,7 +25,6 @@ function renderAuthArea() {
           background:#fff;border:1px solid #e5e7eb;border-radius:10px;
           box-shadow:0 8px 24px rgba(0,0,0,0.08);min-width:160px;z-index:50;overflow:hidden">
           <div style="padding:10px 14px;border-bottom:1px solid #f3f4f6">
-          // แสดงชื่อและอีเมล
             <div style="font-weight:600;font-size:13px">${user.name}</div>
             <div style="font-size:11px;color:#999">${user.email}</div>
           </div>
@@ -123,7 +122,7 @@ function changeQty(id, delta) {
 
   // อัปเดตปุ่มให้แสดงจำนวน
   const addBtn = document.getElementById("add-btn-" + id)
-  if (addBtn) addBtn.textContent = `+ ใส่ตะกร้า (${el.textContent})`
+  if (addBtn) addBtn.textContent = `+ ใส่ตะกร้า`
 }
 
 // ── ใส่ตะกร้า ─────────────────────────────────────────────────
