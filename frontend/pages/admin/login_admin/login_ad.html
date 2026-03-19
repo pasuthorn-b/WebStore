@@ -6,7 +6,7 @@
   <title>เข้าสู่ระบบแอดมิน — MyShop</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/css/style.css" />
+  <link rel="stylesheet" href="../../../assets/css/style.css" />
   <style>
     body { display:flex; flex-direction:column; min-height:100vh }
     .wrap { flex:1; display:flex; align-items:center; justify-content:center; padding:24px 16px }
@@ -21,17 +21,23 @@
 <body>
 
   <nav class="navbar">
-    <span class="navbar-logo" onclick="location.href='../Stores pages/index.html'">🛍️ MyShop</span>
+    <div class="navbar-logo" onclick="location.href='index.html'" style="cursor:pointer;display:flex;align-items:center;gap:8px">
+      <img src="https://www.pngmart.com/files/22/Emoji-Meme-PNG-Photos.png" alt="Logo" style="height:100px;object-fit:contain" />
+      <span style="font-weight:700;font-size:30px;color:#339933">BIDKUB</span>
+    </div>
     <div class="navbar-actions">
       <a href="../../Stores pages/index.html">
-        <button class="btn btn-blue">← กลับร้านค้า</button>
+        <button class="btn btn-blue">← กลับ</button>
       </a>
     </div>
   </nav>
 
   <div class="wrap">
     <div class="box">
-      <div style="text-align:center;font-size:36px;margin-bottom:8px">🔐</div>
+      <img 
+        src="https://static.vecteezy.com/system/resources/previews/009/636/683/non_2x/admin-3d-illustration-icon-png.png" 
+        alt="Logo" 
+        style="height:110px;object-fit:contain;display:block;margin:0 auto 8px" />
       <div style="text-align:center;font-weight:700;font-size:20px;margin-bottom:4px">เข้าสู่ระบบแอดมิน</div>
       <div style="text-align:center;font-size:13px;color:#888;margin-bottom:24px">เฉพาะผู้ดูแลระบบเท่านั้น</div>
 
@@ -48,7 +54,7 @@
         <div id="err-msg" style="display:none;color:#ef4444;font-size:13px;
           background:#fee2e2;border-radius:8px;padding:8px 12px"></div>
 
-        <button class="btn btn-blue" id="login-btn" onclick="handleLogin()"
+        <button class="btn btn-green" id="login-btn" onclick="handleLogin()"
           style="width:100%;padding:10px;margin-top:4px">
           เข้าสู่ระบบ
         </button>

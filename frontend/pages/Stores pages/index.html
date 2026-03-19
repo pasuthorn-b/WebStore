@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ร้านค้า — MyShop</title>
+  <title>BIDKUB SHOP</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../assets/css/style.css" />
@@ -11,10 +11,29 @@
 <body>
 
   <nav class="navbar">
-    <span class="navbar-logo" onclick="location.href='index.html'">🛍️Shop</span>
+    <div class="navbar-logo" onclick="location.href='index.html'" style="cursor:pointer;display:flex;align-items:center;gap:8px">
+      <img src="https://www.pngmart.com/files/22/Emoji-Meme-PNG-Photos.png" alt="Logo" style="height:100px;object-fit:contain" />
+      <span style="font-weight:700;font-size:30px;color:#339933">BIDKUB</span>
+    </div>
     <div class="navbar-actions">
-      <a href="../track/index.html"><button class="btn btn-blue">ติดตามออเดอร์</button></a>
-      <a href="../cart/index.html"><button class="btn btn-blue">🛒ตะกร้า<span id="cart-count"></span></button></a>
+      <a href="../track/index.html">
+    <button class="btn btn-blue">
+        <img 
+            src="https://cdn-icons-png.freepik.com/512/3681/3681701.png" 
+            alt="cart"
+            style="width:16px;height:16px;object-fit:contain;vertical-align:middle;margin-right:4px"
+            />ติดตามออเดอร์
+    </button>
+</a>
+      <a href="../cart/index.html">
+  <button class="btn btn-blue">
+    <img 
+      src="https://png.pngtree.com/png-vector/20250802/ourmid/pngtree-red-cartoon-3d-rendered-shopping-cart-element-png-image_16954879.webp" 
+      alt="cart"
+      style="width:16px;height:16px;object-fit:contain;vertical-align:middle;margin-right:4px"
+      >ตะกร้า<span id="cart-count"></span>
+    </button>
+</a>
       <!-- ถ้า login แล้วแสดง dropdown, ถ้ายังไม่ login แสดงปุ่ม -->
       <div id="auth-area"></div>
       <a href="../admin/login_admin/login_ad.html"><button class="btn btn-blue">แอดมิน</button></a>
@@ -23,7 +42,8 @@
 
   <!-- welcome banner (ซ่อนไว้ก่อน) -->
   <div id="welcome-banner" class="alert alert-green container" style="display:none">
-    👋 สวัสดี <strong id="welcome-name"></strong> ยินดีต้อนรับกลับมา
+    <img src="https://www.emojiall.com/images/240/microsoft-teams/1f44b-1f3fb.png" alt="Wave" style="height:30px;object-fit:contain;margin-right:10px" />
+    สวัสดี <strong id="welcome-name"></strong> ยินดีต้อนรับกลับมา
   </div>
 
   <div class="container">

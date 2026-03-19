@@ -19,7 +19,12 @@ function renderAuthArea() {
     area.innerHTML = `
       <div style="position:relative">
         <button class="btn btn-blue" onclick="toggleProfileMenu()">
-          👤 ${user.name.split(" ")[0]}
+        <img 
+            src="https://cdn-icons-png.freepik.com/256/9055/9055398.png?semt=ais_white_label"
+            alt="user"
+            style="width:16px;height:16px;vertical-align:middle;margin-right:6px"
+        />
+            ${user.name.split(" ")[0]}
         </button>
         <div id="profile-menu" style="display:none;position:absolute;right:0;top:calc(100% + 6px);
           background:#fff;border:1px solid #e5e7eb;border-radius:10px;
@@ -28,12 +33,21 @@ function renderAuthArea() {
             <div style="font-weight:600;font-size:13px">${user.name}</div>
             <div style="font-size:11px;color:#999">${user.email}</div>
           </div>
-          <button onclick="location.href='../my-orders/index.html'"
+          <button onclick="location.href='../user_order/index.html'"
             style="width:100%;padding:10px 14px;border:none;background:none;
-            cursor:pointer;text-align:left;font-size:13px">📦 My Orders</button>
-          <button onclick="handleLogout()"
+            cursor:pointer;text-align:left;font-size:13px;display:flex;align-items:center;gap:8px">
+            <img src="https://icons.veryicon.com/png/o/miscellaneous/classic-car-maintenance-dsm/purchase-order-15.png"
+                style="width:18px;height:18px;vertical-align:middle" />
+            My Orders
+          </button>
+
+        <button onclick="handleLogout()"
             style="width:100%;padding:10px 14px;border:none;background:none;
-            cursor:pointer;text-align:left;font-size:13px;color:#ef4444">🚪 Logout</button>
+            cursor:pointer;text-align:left;font-size:13px;color:#ef4444;display:flex;align-items:center;gap:8px">
+            <img src="https://img.icons8.com/ios/20/ef4444/exit.png"
+                style="width:18px;height:18px;vertical-align:middle" />
+            Logout
+        </button>
         </div>
       </div>`
   } else {
