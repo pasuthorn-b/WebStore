@@ -1,6 +1,6 @@
 const STATUS_COLOR = {
   "รอยืนยัน":"#f59e0b","กำลังเตรียม":"#3b82f6",
-  "จัดส่งแล้ว":"#8b5cf6","สำเร็จ":"#10b981","ยกเลิก":"#ef4444"
+  "กำลังจัดส่ง":"#8b5cf6","สำเร็จ":"#10b981","ยกเลิก":"#ef4444"
 }
 
 window.onload = async () => {
@@ -15,8 +15,7 @@ window.onload = async () => {
   const listEl = document.getElementById("orders-list")
 
   try {
-    const orders = await api.orders.getAll()
-    const mine = orders.filter(o => o.userId === user.id)
+    const mine = await api.orders.getMy()
 
     if (mine.length === 0) {
       listEl.innerHTML = `

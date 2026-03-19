@@ -1,3 +1,20 @@
+async function request(method, path, body = null) {
+  const token = localStorage.getItem("token")
+  const options = {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { "Authorization": "Bearer " + token } : {})
+    }
+  }
+  if (body) options.body = JSON.stringify(body)
+
+  const res = await fetch("http://localhost:4000/api" + path, options)
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.error || "เกิดข้อผิดพลาด")
+  return data
+}
+
 // ── เช็คสิทธิ์ admin ─────────────────────────────────────────
 function requireAdmin() {
   const user = api.auth.getUser()

@@ -261,14 +261,24 @@ app.delete('/api/products/:id', requireAdmin, (req, res) => {
   })
 })
 
+
 //  ORDERS
-app.get('/api/orders', requireAdmin, (req, res) => {
-  db.query('SELECT * FROM orders ORDER BY createdAt DESC', (err, orders) => {
+
+// ดึงออเดอร์ของ user ที่ login อยู่
+app.get('/api/orders/my', requireAuth, (req, res) => {
+  const userId = req.user.id
+  db.query('SELECT * FROM orders WHERE userId = ? ORDER BY createdAt DESC', [userId], (err, orders) => {
     if (err) return sendError(res, err)
     if (orders.length === 0) return res.json([])
 
     const ids = orders.map(o => o.id)
-    db.query('SELECT * FROM order_items WHERE orderId IN (?)', [ids], (err2, items) => {
+    db.query(`
+      SELECT oi.id, oi.orderId, oi.productId, oi.qty, oi.price,
+        COALESCE(oi.name, p.name) as name
+      FROM order_items oi
+      LEFT JOIN products p ON oi.productId = p.id
+      WHERE oi.orderId IN (?)
+    `, [ids], (err2, items) => {
       if (err2) return sendError(res, err2)
       const result = orders.map(o => ({
         ...o,
@@ -279,18 +289,50 @@ app.get('/api/orders', requireAdmin, (req, res) => {
   })
 })
 
+// ดึงออเดอร์ทั้งหมด (admin)
+app.get('/api/orders', requireAdmin, (req, res) => {
+  db.query('SELECT * FROM orders ORDER BY createdAt DESC', (err, orders) => {
+    if (err) return sendError(res, err)
+    if (orders.length === 0) return res.json([])
+
+    const ids = orders.map(o => o.id)
+    db.query(`
+      SELECT oi.id, oi.orderId, oi.productId, oi.qty, oi.price,
+        COALESCE(oi.name, p.name) as name
+      FROM order_items oi
+      LEFT JOIN products p ON oi.productId = p.id
+      WHERE oi.orderId IN (?)
+    `, [ids], (err2, items) => {
+      if (err2) return sendError(res, err2)
+      const result = orders.map(o => ({
+        ...o,
+        items: items.filter(i => i.orderId === o.id)
+      }))
+      return res.json(result)
+    })
+  })
+})
+
+// ดึงออเดอร์เดียว
 app.get('/api/orders/:id', (req, res) => {
   db.query('SELECT * FROM orders WHERE id = ?', [req.params.id], (err, orders) => {
     if (err) return sendError(res, err)
     if (orders.length === 0) return res.status(404).json({ error: 'ไม่พบคำสั่งซื้อ' })
     const order = orders[0]
-    db.query('SELECT * FROM order_items WHERE orderId = ?', [req.params.id], (err2, items) => {
+    db.query(`
+      SELECT oi.id, oi.orderId, oi.productId, oi.qty, oi.price,
+        COALESCE(oi.name, p.name) as name
+      FROM order_items oi
+      LEFT JOIN products p ON oi.productId = p.id
+      WHERE oi.orderId = ?
+    `, [req.params.id], (err2, items) => {
       if (err2) return sendError(res, err2)
       return res.json({ ...order, items })
     })
   })
 })
 
+// สร้างออเดอร์
 app.post('/api/orders', (req, res) => {
   const { customer, phone, address, userId, items } = req.body
   if (!customer || !phone || !address || !Array.isArray(items) || items.length === 0)
@@ -314,6 +356,7 @@ app.post('/api/orders', (req, res) => {
   )
 })
 
+// อัปเดตสถานะ (admin)
 app.patch('/api/orders/:id/status', requireAdmin, (req, res) => {
   const { status } = req.body
   if (!status) return res.status(400).json({ error: 'status required' })
@@ -323,7 +366,6 @@ app.patch('/api/orders/:id/status', requireAdmin, (req, res) => {
     return res.json({ ok: true })
   })
 })
-
 // ── 404 fallback ──────────────────────────────────────────────
 app.use((req, res) => res.status(404).json({ error: 'ไม่พบ API endpoint' }))
 

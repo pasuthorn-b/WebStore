@@ -1,7 +1,7 @@
 const STATUS_COLOR = {
   "รอยืนยัน":   "#f59e0b",
   "กำลังเตรียม":"#3b82f6",
-  "จัดส่งแล้ว": "#8b5cf6",
+  "กำลังจัดส่ง": "#8b5cf6",
   "สำเร็จ":     "#10b981",
   "ยกเลิก":     "#ef4444",
 }
@@ -17,9 +17,13 @@ window.onload = () => {
 }
 
 async function doTrack() {
-  const id = document.getElementById("track-input").value.trim()
+  let id = document.getElementById("track-input").value.trim()  // ← เปลี่ยน const เป็น let
   const resultEl = document.getElementById("track-result")
   if (!id) return
+
+  if (id.toUpperCase().startsWith("ORD")) {
+    id = parseInt(id.replace(/\D/g, ""))
+  }
 
   resultEl.innerHTML = `<div class="loading">⏳ กำลังค้นหา...</div>`
 
@@ -30,7 +34,7 @@ async function doTrack() {
     resultEl.innerHTML = `
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-          <span style="font-weight:700;font-size:16px">${order.id}</span>
+          <span style="font-weight:700;font-size:16px">ORD${String(order.id).padStart(3,"0")}</span>
           <span style="background:${c}20;color:${c};border-radius:20px;
             padding:2px 12px;font-size:12px;font-weight:600;border:1px solid ${c}40">
             ${order.status}

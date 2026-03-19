@@ -15,12 +15,12 @@ async function loadMembers() {
   try {
     ;[allMembers, allOrders] = await Promise.all([
       request("GET", "/users"),
-      api.orders.getAll()
+      request("GET", "/orders")
     ])
 
     // stats
     const memOrders = allOrders.filter(o => o.userId)
-    const memRev    = memOrders.reduce((s,o) => s + o.total, 0)
+    const memRev = memOrders.reduce((s,o) => s + Number(o.total), 0)
     const avgOrder  = allMembers.length > 0
       ? Math.round(memRev / allMembers.length)
       : 0
@@ -49,7 +49,7 @@ function renderMembers(members) {
 
   listEl.innerHTML = members.map(u => {
     const mine  = allOrders.filter(o => o.userId === u.id)
-    const total = mine.reduce((s, o) => s + o.total, 0)
+    const total = mine.reduce((s, o) => s + Number(o.total), 0)
     const last  = mine.length > 0
       ? new Date(mine[mine.length-1].createdAt).toLocaleDateString("th-TH",{day:"2-digit",month:"2-digit",year:"numeric"})
       : null

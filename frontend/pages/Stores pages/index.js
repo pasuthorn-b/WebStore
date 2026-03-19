@@ -92,9 +92,7 @@ async function loadProducts() {
 
     let html = ""
     for (const p of products) {
-      const imgHtml = p.imgType === "url"
-        ? `<img src="http://localhost:4000${p.imgUrl}" style="width:80px;height:80px;object-fit:cover;border-radius:10px" />`
-        : p.img
+      const imgHtml = `<img src="http://localhost:4000${p.imgUrl}" style="width:100%;height:200px;object-fit:cover;border-radius:8px">`
 
       html += `
         <div class="product-card">

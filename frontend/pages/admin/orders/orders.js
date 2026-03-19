@@ -1,11 +1,11 @@
 const STATUS_COLOR = {
   "รอยืนยัน":    "#f59e0b",
   "กำลังเตรียม": "#3b82f6",
-  "จัดส่งแล้ว":  "#8b5cf6",
+  "กำลังจัดส่ง":  "#8b5cf6",
   "สำเร็จ":      "#10b981",
   "ยกเลิก":      "#ef4444",
 }
-const ALL_STATUS = ["รอยืนยัน","กำลังเตรียม","จัดส่งแล้ว","สำเร็จ","ยกเลิก"]
+const ALL_STATUS = ["รอยืนยัน","กำลังเตรียม","กำลังจัดส่ง","สำเร็จ","ยกเลิก"]
 
 let allOrders = []
 
@@ -25,7 +25,7 @@ async function loadOrders() {
     allOrders = await api.orders.getAll()
 
     // stats
-    const total   = allOrders.reduce((s,o) => s + o.total, 0)
+    const total   = allOrders.reduce((s,o) => s + Number(o.total), 0)
     const waiting = allOrders.filter(o => o.status === "รอยืนยัน").length
     const prep    = allOrders.filter(o => o.status === "กำลังเตรียม").length
     const done    = allOrders.filter(o => o.status === "สำเร็จ").length
@@ -64,7 +64,7 @@ function filterOrders() {
 
   const filtered = allOrders.filter(o => {
     const matchSearch = !q ||
-      o.id.toLowerCase().includes(q) ||
+      o.id.toString().includes(q) ||
       o.customer.toLowerCase().includes(q) ||
       o.phone.includes(q)
     const matchStatus = !status || o.status === status
@@ -120,7 +120,7 @@ function orderCard(o) {
         ${items}
         <div style="text-align:right;font-weight:700;font-size:14px;margin-top:8px;
           padding-top:8px;border-top:1px solid #e5e7eb">
-          รวม ฿${o.total.toLocaleString()}
+          รวม ฿${Number(o.total).toLocaleString()}
         </div>
       </div>
 

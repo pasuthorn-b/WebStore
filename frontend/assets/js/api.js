@@ -121,6 +121,8 @@ const api = {
 
     // ดึงออเดอร์เดียว → order
     getOne: (id) => request("GET", "/orders/" + id),
+    
+    getMy: () => request("GET", "/orders/my"),
 
     // สั่งซื้อ → order
     // body: { customer, phone, address, items: [{ productId, qty, price }] }
