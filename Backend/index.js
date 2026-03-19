@@ -1,277 +1,331 @@
-const express = require('express');
-const mysql = require('mysql2');
-const cors = require('cors');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+const express  = require('express')
+const mysql    = require('mysql2')
+const cors     = require('cors')
+const multer   = require('multer')
+const path     = require('path')
+const fs       = require('fs')
+const bcrypt   = require('bcryptjs')
+const jwt      = require('jsonwebtoken')
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+const app = express()
+app.use(cors())
+app.use(express.json())
 
-// serve frontend assets directly from project structure
-const FRONTEND_DIR = path.join(__dirname, '..', 'frontend');
-app.use(express.static(FRONTEND_DIR));
+const JWT_SECRET = process.env.JWT_SECRET || 'myshop_secret_key_2026'
 
-// serve uploads
-const UPLOAD_DIR = path.join(__dirname, 'uploads');
-if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-app.use('/uploads', express.static(UPLOAD_DIR));
+//serve frontend
+const FRONTEND_DIR = path.join(__dirname, '..', 'frontend')
+app.use(express.static(FRONTEND_DIR))
+
+// upload
+const UPLOAD_DIR = path.join(__dirname, 'uploads')
+if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true })
+app.use('/uploads', express.static(UPLOAD_DIR))
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, UPLOAD_DIR),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname); 
-    const name = `${Date.now()}-${Math.floor(Math.random() * 10000)}${ext}`;
-    cb(null, name);
+  filename:    (req, file, cb) => {
+    const ext  = path.extname(file.originalname)
+    const name = `${Date.now()}-${Math.floor(Math.random() * 10000)}${ext}`
+    cb(null, name)
   }
-});
-const upload = multer({ storage });
+})
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // max 5MB
+  fileFilter: (req, file, cb) => {
+    const allowed = ['image/jpeg','image/png','image/webp','image/gif']
+    if (allowed.includes(file.mimetype)) cb(null, true)
+    else cb(new Error('อนุญาตเฉพาะไฟล์รูปภาพเท่านั้น'))
+  }
+})
 
+// database 
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'root',
-    database: 'webdb',
-    port: 8820,
-    multipleStatements: true
-});
+  host:     'localhost',
+  user:     'root',
+  password: 'root',
+  database: 'webdb',
+  port:     8820,
+  multipleStatements: true
+})
 
 db.connect((err) => {
-    if (err) {
-        console.error('Error connecting to MySQL:', err);
-        process.exit(1);
-    }
-    console.log('Connected to MySQL Database!');
+  if (err) { console.error('MySQL connect error:', err); process.exit(1) }
+  console.log('Connected to MySQL!')
 
-    const schema = `
-CREATE TABLE IF NOT EXISTS users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(150) NOT NULL,
-  email VARCHAR(150) NOT NULL UNIQUE,
-  phone VARCHAR(50),
-  password VARCHAR(255) NOT NULL,
-  role ENUM('customer','admin') NOT NULL DEFAULT 'customer',
-  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+  const schema = `
+    CREATE TABLE IF NOT EXISTS users (
+      id        INT AUTO_INCREMENT PRIMARY KEY,
+      name      VARCHAR(150) NOT NULL,
+      email     VARCHAR(150) NOT NULL UNIQUE,
+      phone     VARCHAR(50),
+      password  VARCHAR(255) NOT NULL,
+      role      ENUM('customer','admin') NOT NULL DEFAULT 'customer',
+      createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS products (
+      id        INT AUTO_INCREMENT PRIMARY KEY,
+      name      VARCHAR(200) NOT NULL,
+      price     DECIMAL(12,2) NOT NULL DEFAULT 0,
+      stock     INT NOT NULL DEFAULT 0,
+      \`desc\`  TEXT,
+      category  VARCHAR(100),
+      img       VARCHAR(255),
+      imgType   VARCHAR(50),
+      imgUrl    VARCHAR(255),
+      createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS orders (
+      id        INT AUTO_INCREMENT PRIMARY KEY,
+      customer  VARCHAR(200) NOT NULL,
+      phone     VARCHAR(50) NOT NULL,
+      address   TEXT NOT NULL,
+      userId    INT,
+      status    VARCHAR(50) NOT NULL DEFAULT 'รอยืนยัน',
+      total     DECIMAL(12,2) NOT NULL DEFAULT 0,
+      createdAt DATETIME NOT NULL,
+      FOREIGN KEY (userId) REFERENCES users(id) ON DELETE SET NULL
+    );
+    CREATE TABLE IF NOT EXISTS order_items (
+      id        INT AUTO_INCREMENT PRIMARY KEY,
+      orderId   INT NOT NULL,
+      productId INT,
+      qty       INT NOT NULL,
+      price     DECIMAL(12,2) NOT NULL,
+      name      VARCHAR(250),
+      FOREIGN KEY (orderId) REFERENCES orders(id) ON DELETE CASCADE
+    );
+  `
+  db.query(schema, (err) => {
+    if (err) console.error('Schema error:', err)
+    else console.log('Database schema ready.')
+  })
+})
 
-CREATE TABLE IF NOT EXISTS products (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(200) NOT NULL,
-  price DECIMAL(12,2) NOT NULL DEFAULT 0,
-  stock INT NOT NULL DEFAULT 0,
-  \`desc\` TEXT,
-  category VARCHAR(100),
-  img VARCHAR(255),
-  imgType VARCHAR(50),
-  imgUrl VARCHAR(255),
-  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS orders (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  customer VARCHAR(200) NOT NULL,
-  phone VARCHAR(50) NOT NULL,
-  address TEXT NOT NULL,
-  userId INT,
-  status VARCHAR(50) NOT NULL DEFAULT 'รอยืนยัน',
-  total DECIMAL(12,2) NOT NULL DEFAULT 0,
-  createdAt DATETIME NOT NULL,
-  FOREIGN KEY (userId) REFERENCES users(id) ON DELETE SET NULL
-);
-
-CREATE TABLE IF NOT EXISTS order_items (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  orderId INT NOT NULL,
-  productId INT,
-  qty INT NOT NULL,
-  price DECIMAL(12,2) NOT NULL,
-  name VARCHAR(250),
-  FOREIGN KEY (orderId) REFERENCES orders(id) ON DELETE CASCADE
-);
-`;
-
-    db.query(schema, (schemaErr) => {
-      if (schemaErr) console.error('Schema creation error:', schemaErr);
-      else console.log('Database schema ready.');
-    });
-});
-
-function sendError(res, err, status = 500) {
-  console.error(err);
-  return res.status(status).json({ error: err.message || err.toString() });
+// helpers
+const sendError = (res, err, status = 500) => {
+  console.error(err)
+  return res.status(status).json({ error: err.message || err.toString() })
 }
 
-function generateToken() {
-  return require('crypto').randomBytes(32).toString('hex');
+// middleware เช็ค JWT
+const requireAuth = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1]
+  if (!token) return res.status(401).json({ error: 'กรุณาเข้าสู่ระบบ' })
+  try {
+    req.user = jwt.verify(token, JWT_SECRET)
+    next()
+  } catch {
+    return res.status(401).json({ error: 'Token ไม่ถูกต้องหรือหมดอายุ' })
+  }
 }
 
-// ---- users/auth ----
-app.post('/api/auth/register', (req, res) => {
-  const { name, email, phone, password } = req.body;
-  if (!name || !email || !phone || !password) return res.status(400).json({ error: 'ข้อมูลไม่ครบ' });
+// middleware เช็ค admin
+const requireAdmin = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1]
+  if (!token) return res.status(401).json({ error: 'กรุณาเข้าสู่ระบบ' })
+  try {
+    req.user = jwt.verify(token, JWT_SECRET)
+    if (req.user.role !== 'admin')
+      return res.status(403).json({ error: 'ไม่มีสิทธิ์เข้าถึง' })
+    next()
+  } catch {
+    return res.status(401).json({ error: 'Token ไม่ถูกต้องหรือหมดอายุ' })
+  }
+}
 
-  const checkSql = 'SELECT id FROM users WHERE email = ?';
-  db.query(checkSql, [email], (err, results) => {
-    if (err) return sendError(res, err);
-    if (results.length > 0) return res.status(409).json({ error: 'อีเมลถูกใช้งานแล้ว' });
+//  AUTH
+app.post('/api/auth/register', async (req, res) => {
+  const { name, email, phone, password } = req.body
+  if (!name || !email || !phone || !password)
+    return res.status(400).json({ error: 'ข้อมูลไม่ครบ' })
 
-    const insertSql = 'INSERT INTO users (name,email,phone,password,role) VALUES (?,?,?,?,?)';
-    db.query(insertSql, [name, email, phone, password, 'customer'], (err2, insertResult) => {
-      if (err2) return sendError(res, err2);
-      return res.json({ id: insertResult.insertId, name, email, phone, role: 'customer' });
-    });
-  });
-});
+  db.query('SELECT id FROM users WHERE email = ?', [email], async (err, rows) => {
+    if (err) return sendError(res, err)
+    if (rows.length > 0) return res.status(409).json({ error: 'อีเมลถูกใช้งานแล้ว' })
+
+    try {
+      // hash รหัสผ่านก่อนเก็บ
+      const hashed = await bcrypt.hash(password, 10)
+      db.query(
+        'INSERT INTO users (name,email,phone,password,role) VALUES (?,?,?,?,?)',
+        [name, email, phone, hashed, 'customer'],
+        (err2, result) => {
+          if (err2) return sendError(res, err2)
+          return res.json({ id: result.insertId, name, email, phone, role: 'customer' })
+        }
+      )
+    } catch (e) { return sendError(res, e) }
+  })
+})
 
 app.post('/api/auth/login', (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) return res.status(400).json({ error: 'ข้อมูลไม่ครบ' });
+  const { email, password } = req.body
+  if (!email || !password)
+    return res.status(400).json({ error: 'ข้อมูลไม่ครบ' })
 
-  const sql = 'SELECT id,name,email,phone,role FROM users WHERE email = ? AND password = ? LIMIT 1';
-  db.query(sql, [email, password], (err, users) => {
-    if (err) return sendError(res, err);
-    if (users.length === 0) return res.status(401).json({ error: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' });
+  db.query(
+    'SELECT id,name,email,phone,role,password FROM users WHERE email = ? LIMIT 1',
+    [email],
+    async (err, rows) => {
+      if (err) return sendError(res, err)
+      if (rows.length === 0)
+        return res.status(401).json({ error: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' })
 
-    const user = users[0];
-    const token = generateToken();
-    return res.json({ token, user });
-  });
-});
+      const user = rows[0]
+      try {
+        const match = await bcrypt.compare(password, user.password)
+        if (!match)
+          return res.status(401).json({ error: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' })
 
-app.get('/api/users', (req, res) => {
-  const sql = 'SELECT id,name,email,phone,role FROM users';
-  db.query(sql, (err, data) => {
-    if (err) return sendError(res, err);
-    return res.json(data);
-  });
-});
+        const token = jwt.sign(
+          { id: user.id, name: user.name, email: user.email, role: user.role },
+          JWT_SECRET,
+          { expiresIn: '8h' }
+        )
+        const { password: _, ...userWithoutPassword } = user
+        return res.json({ token, user: userWithoutPassword })
+      } catch (e) { return sendError(res, e) }
+    }
+  )
+})
 
-// ---- products ----
+app.get('/api/users', requireAdmin, (req, res) => {
+  db.query('SELECT id,name,email,phone,role,createdAt FROM users', (err, data) => {
+    if (err) return sendError(res, err)
+    return res.json(data)
+  })
+})
+
+//  PRODUCTS
+// upload ต้องมาก่อน /:id
+app.post('/api/products/upload', requireAdmin, upload.single('image'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'ไม่มีไฟล์ถูกส่ง' })
+  return res.json({ url: '/uploads/' + req.file.filename })
+})
+
 app.get('/api/products', (req, res) => {
   db.query('SELECT * FROM products ORDER BY id DESC', (err, data) => {
-    if (err) return sendError(res, err);
-    return res.json(data);
-  });
-});
+    if (err) return sendError(res, err)
+    return res.json(data)
+  })
+})
 
 app.get('/api/products/:id', (req, res) => {
   db.query('SELECT * FROM products WHERE id = ?', [req.params.id], (err, data) => {
-    if (err) return sendError(res, err);
-    if (data.length === 0) return res.status(404).json({ error: 'ไม่พบสินค้า' });
-    return res.json(data[0]);
-  });
-});
+    if (err) return sendError(res, err)
+    if (data.length === 0) return res.status(404).json({ error: 'ไม่พบสินค้า' })
+    return res.json(data[0])
+  })
+})
 
-app.post('/api/products', (req, res) => {
-  const { name, price, stock, desc, category, img, imgType, imgUrl } = req.body;
-  if (!name || price == null) return res.status(400).json({ error: 'ข้อมูลสินค้าไม่ครบ' });
+app.post('/api/products', requireAdmin, (req, res) => {
+  const { name, price, stock, desc, category, img, imgType, imgUrl } = req.body
+  if (!name || price == null) return res.status(400).json({ error: 'ข้อมูลสินค้าไม่ครบ' })
 
-  const sql = 'INSERT INTO products (name,price,stock,`desc`,category,img,imgType,imgUrl) VALUES (?,?,?,?,?,?,?,?)';
-  db.query(sql, [name, price, stock || 0, desc || '', category || '', img || '', imgType || 'emoji', imgUrl || ''], (err, result) => {
-    if (err) return sendError(res, err);
-    db.query('SELECT * FROM products WHERE id = ?', [result.insertId], (err2, rows) => {
-      if (err2) return sendError(res, err2);
-      return res.json(rows[0]);
-    });
-  });
-});
+  db.query(
+    'INSERT INTO products (name,price,stock,`desc`,category,img,imgType,imgUrl) VALUES (?,?,?,?,?,?,?,?)',
+    [name, price, stock || 0, desc || '', category || '', img || '', imgType || 'emoji', imgUrl || ''],
+    (err, result) => {
+      if (err) return sendError(res, err)
+      db.query('SELECT * FROM products WHERE id = ?', [result.insertId], (err2, rows) => {
+        if (err2) return sendError(res, err2)
+        return res.json(rows[0])
+      })
+    }
+  )
+})
 
-app.put('/api/products/:id', (req, res) => {
-  const { name, price, stock, desc, category, img, imgType, imgUrl } = req.body;
-  const sql = 'UPDATE products SET name=?,price=?,stock=?,`desc`=?,category=?,img=?,imgType=?,imgUrl=? WHERE id=?';
-  db.query(sql, [name, price, stock, desc, category, img, imgType, imgUrl, req.params.id], (err) => {
-    if (err) return sendError(res, err);
-    db.query('SELECT * FROM products WHERE id = ?', [req.params.id], (err2, rows) => {
-      if (err2) return sendError(res, err2);
-      if (rows.length === 0) return res.status(404).json({ error: 'ไม่พบสินค้า' });
-      return res.json(rows[0]);
-    });
-  });
-});
+app.put('/api/products/:id', requireAdmin, (req, res) => {
+  const { name, price, stock, desc, category, img, imgType, imgUrl } = req.body
+  db.query(
+    'UPDATE products SET name=?,price=?,stock=?,`desc`=?,category=?,img=?,imgType=?,imgUrl=? WHERE id=?',
+    [name, price, stock, desc, category, img, imgType, imgUrl, req.params.id],
+    (err) => {
+      if (err) return sendError(res, err)
+      db.query('SELECT * FROM products WHERE id = ?', [req.params.id], (err2, rows) => {
+        if (err2) return sendError(res, err2)
+        if (rows.length === 0) return res.status(404).json({ error: 'ไม่พบสินค้า' })
+        return res.json(rows[0])
+      })
+    }
+  )
+})
 
-app.delete('/api/products/:id', (req, res) => {
+app.delete('/api/products/:id', requireAdmin, (req, res) => {
   db.query('DELETE FROM products WHERE id = ?', [req.params.id], (err, result) => {
-    if (err) return sendError(res, err);
-    if (result.affectedRows === 0) return res.status(404).json({ error: 'ไม่พบสินค้า' });
-    return res.json({ ok: true });
-  });
-});
+    if (err) return sendError(res, err)
+    if (result.affectedRows === 0) return res.status(404).json({ error: 'ไม่พบสินค้า' })
+    return res.json({ ok: true })
+  })
+})
 
-app.post('/api/products/upload', upload.single('image'), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'ไม่มีไฟล์ถูกส่ง' });
-  const urlPath = '/uploads/' + req.file.filename;
-  return res.json({ url: urlPath });
-});
-
-// ---- orders ----
-app.get('/api/orders', (req, res) => {
+//  ORDERS
+app.get('/api/orders', requireAdmin, (req, res) => {
   db.query('SELECT * FROM orders ORDER BY createdAt DESC', (err, orders) => {
-    if (err) return sendError(res, err);
-    if (orders.length === 0) return res.json([]);
+    if (err) return sendError(res, err)
+    if (orders.length === 0) return res.json([])
 
-    const orderIds = orders.map(o => o.id);
-    db.query('SELECT * FROM order_items WHERE orderId IN (?)', [orderIds], (err2, items) => {
-      if (err2) return sendError(res, err2);
-      const grouped = orders.map(o => ({
+    const ids = orders.map(o => o.id)
+    db.query('SELECT * FROM order_items WHERE orderId IN (?)', [ids], (err2, items) => {
+      if (err2) return sendError(res, err2)
+      const result = orders.map(o => ({
         ...o,
-        items: items.filter(i => i.orderId === o.id),
-      }));
-      return res.json(grouped);
-    });
-  });
-});
+        items: items.filter(i => i.orderId === o.id)
+      }))
+      return res.json(result)
+    })
+  })
+})
 
 app.get('/api/orders/:id', (req, res) => {
-  const orderId = req.params.id;
-  db.query('SELECT * FROM orders WHERE id = ?', [orderId], (err, orders) => {
-    if (err) return sendError(res, err);
-    if (orders.length === 0) return res.status(404).json({ error: 'ไม่พบคำสั่งซื้อ' });
-    const order = orders[0];
-    db.query('SELECT * FROM order_items WHERE orderId = ?', [orderId], (err2, items) => {
-      if (err2) return sendError(res, err2);
-      return res.json({ ...order, items });
-    });
-  });
-});
+  db.query('SELECT * FROM orders WHERE id = ?', [req.params.id], (err, orders) => {
+    if (err) return sendError(res, err)
+    if (orders.length === 0) return res.status(404).json({ error: 'ไม่พบคำสั่งซื้อ' })
+    const order = orders[0]
+    db.query('SELECT * FROM order_items WHERE orderId = ?', [req.params.id], (err2, items) => {
+      if (err2) return sendError(res, err2)
+      return res.json({ ...order, items })
+    })
+  })
+})
 
 app.post('/api/orders', (req, res) => {
-  const { customer, phone, address, userId, items } = req.body;
-  if (!customer || !phone || !address || !Array.isArray(items) || items.length === 0) {
-    return res.status(400).json({ error: 'ข้อมูลคำสั่งซื้อไม่ครบ' });
-  }
+  const { customer, phone, address, userId, items } = req.body
+  if (!customer || !phone || !address || !Array.isArray(items) || items.length === 0)
+    return res.status(400).json({ error: 'ข้อมูลคำสั่งซื้อไม่ครบ' })
 
-  const total = items.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const createdAt = new Date();
-  const status = 'รอยืนยัน';
+  const total     = items.reduce((sum, i) => sum + i.price * i.qty, 0)
+  const createdAt = new Date()
 
-  db.query('INSERT INTO orders (customer,phone,address,userId,status,total,createdAt) VALUES (?,?,?,?,?,?,?)',
-    [customer, phone, address, userId || null, status, total, createdAt], (err, result) => {
-      if (err) return sendError(res, err);
-      const orderId = result.insertId;
-
-      const itemRows = items.map(i => [orderId, i.productId, i.qty, i.price, i.name || null]);
+  db.query(
+    'INSERT INTO orders (customer,phone,address,userId,status,total,createdAt) VALUES (?,?,?,?,?,?,?)',
+    [customer, phone, address, userId || null, 'รอยืนยัน', total, createdAt],
+    (err, result) => {
+      if (err) return sendError(res, err)
+      const orderId  = result.insertId
+      const itemRows = items.map(i => [orderId, i.productId || null, i.qty, i.price, i.name || null])
       db.query('INSERT INTO order_items (orderId,productId,qty,price,name) VALUES ?', [itemRows], (err2) => {
-        if (err2) return sendError(res, err2);
-        return res.json({ id: orderId, customer, phone, address, userId, status, total, createdAt, items });
-      });
-    });
-});
+        if (err2) return sendError(res, err2)
+        return res.json({ id: orderId, customer, phone, address, userId, status: 'รอยืนยัน', total, createdAt, items })
+      })
+    }
+  )
+})
 
-app.patch('/api/orders/:id/status', (req, res) => {
-  const { status } = req.body;
-  if (!status) return res.status(400).json({ error: 'status required' });
+app.patch('/api/orders/:id/status', requireAdmin, (req, res) => {
+  const { status } = req.body
+  if (!status) return res.status(400).json({ error: 'status required' })
   db.query('UPDATE orders SET status = ? WHERE id = ?', [status, req.params.id], (err, result) => {
-    if (err) return sendError(res, err);
-    if (result.affectedRows === 0) return res.status(404).json({ error: 'ไม่พบคำสั่งซื้อ' });
-    return res.json({ ok: true });
-  });
-});
+    if (err) return sendError(res, err)
+    if (result.affectedRows === 0) return res.status(404).json({ error: 'ไม่พบคำสั่งซื้อ' })
+    return res.json({ ok: true })
+  })
+})
 
-// fallback
-app.use((req, res) => res.status(404).json({ error: 'ไม่พบ API endpoint' }));
+// ── 404 fallback ──────────────────────────────────────────────
+app.use((req, res) => res.status(404).json({ error: 'ไม่พบ API endpoint' }))
 
-const PORT = 4000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+const PORT = 4000
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
