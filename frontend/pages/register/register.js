@@ -3,7 +3,7 @@ if (api.auth.isLoggedIn()) {
   location.href = "../Stores pages/Stores_pages.html"
 }
 
-// ── แสดง error ────────────────────────────────────────────────
+//แสดง error
 function showError(msg) {
   const el = document.getElementById("err-msg")
   el.textContent = msg
@@ -11,7 +11,7 @@ function showError(msg) {
   document.getElementById("ok-msg").style.display = "none"
 }
 
-// ── แสดง success ──────────────────────────────────────────────
+//แสดง success
 function showSuccess(msg) {
   const el = document.getElementById("ok-msg")
   el.textContent = msg
@@ -19,7 +19,7 @@ function showSuccess(msg) {
   document.getElementById("err-msg").style.display = "none"
 }
 
-// ── validate ──────────────────────────────────────────────────
+// validate
 function validate(name, email, password, confirm) {
   if (!name)              return "กรุณากรอกชื่อ-นามสกุล"
   if (!email)             return "กรุณากรอกอีเมล"
@@ -28,10 +28,10 @@ function validate(name, email, password, confirm) {
   if (!password)          return "กรุณากรอกรหัสผ่าน"
   if (password.length < 6) return "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร"
   if (password !== confirm) return "รหัสผ่านไม่ตรงกัน"
-  return null // ผ่านหมด
+  return null
 }
 
-// ── สมัครสมาชิก ───────────────────────────────────────────────
+//สมัครสมาชิก
 async function handleRegister() {
   const name     = document.getElementById("name").value.trim()
   const email    = document.getElementById("email").value.trim()
@@ -49,13 +49,8 @@ async function handleRegister() {
   btn.textContent = "กำลังสมัคร..."
 
   try {
-    // 1. สมัครสมาชิก
     await api.auth.register({ name, email, phone, password })
-
-    // 2. login ให้เลยอัตโนมัติ
     await api.auth.login({ email, password })
-
-    // 3. แจ้งสำเร็จ แล้วพาไปหน้าร้าน
     showSuccess("สมัครสมาชิกสำเร็จ! กำลังพาไปหน้าร้านค้า...")
     setTimeout(() => {
       location.href = "../Stores pages/Stores_pages.html"
@@ -68,7 +63,7 @@ async function handleRegister() {
   }
 }
 
-// ── กด Enter ส่งฟอร์มได้เลย ───────────────────────────────────
+// กด Enter ส่งฟอร์มได้เลย
 document.addEventListener("keydown", e => {
   if (e.key === "Enter") handleRegister()
 })
