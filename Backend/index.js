@@ -135,7 +135,7 @@ const requireAdmin = (req, res, next) => {
   }
 }
 
-//  AUTH
+// AUTH
 app.post('/api/auth/register', async (req, res) => {
   const { name, email, phone, password } = req.body
   if (!name || !email || !phone || !password)
