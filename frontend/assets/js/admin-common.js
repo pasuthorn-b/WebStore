@@ -15,7 +15,7 @@ async function request(method, path, body = null) {
   return data
 }
 
-// ── เช็คสิทธิ์ admin ─────────────────────────────────────────
+// เช็คสิทธิ์ admin
 function requireAdmin() {
   const user = api.auth.getUser()
   if (!user || user.role !== "admin") {
@@ -26,7 +26,7 @@ function requireAdmin() {
   return user
 }
 
-// ── สร้าง Navbar ──────────────────────────────────────────────
+// สร้าง Navbar 
 // activeTab = "orders" | "products" | "members"
 function renderAdminNav(activeTab) {
   const user = api.auth.getUser()
@@ -60,7 +60,7 @@ function renderAdminNav(activeTab) {
   `
 }
 
-// ── Logout ────────────────────────────────────────────────────
+// Logout
 function adminLogout() {
   if (confirm("ออกจากระบบใช่ไหม?")) {
     api.auth.logout()
@@ -68,7 +68,7 @@ function adminLogout() {
   }
 }
 
-// ── Helpers ───────────────────────────────────────────────────
+// Helpers
 function statCard(num, label) {
   return `
     <div class="stat-card">
