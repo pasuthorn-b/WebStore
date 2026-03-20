@@ -7,12 +7,16 @@ async function request(method, path, body = null) {
       ...(token ? { "Authorization": "Bearer " + token } : {})
     }
   }
-  if (body) options.body = JSON.stringify(body)
+  if (body) {
+    options.body = JSON.stringify(body)
+  }
 
   const res = await fetch("http://localhost:4000/api" + path, options)
   const data = await res.json()
-  if (!res.ok) throw new Error(data.error || "เกิดข้อผิดพลาด")
-  return data
+  if (!res.ok) {
+    throw new Error(data.error || "เกิดข้อผิดพลาด")
+  }
+    return data
 }
 
 // เช็คสิทธิ์ admin
@@ -23,7 +27,7 @@ function requireAdmin() {
     location.href = "../login_admin/login_ad.html"
     return null
   }
-  return user
+    return user
 }
 
 // สร้าง Navbar 

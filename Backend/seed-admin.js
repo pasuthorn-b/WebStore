@@ -15,8 +15,11 @@ async function main() {
     'INSERT INTO users (name,email,phone,password,role) VALUES (?,?,?,?,?)',
     ['Admin', 'admin@shop.com', '099-000-0000', hashed, 'admin'],
     (err, result) => {
-      if (err) console.error(err)
-      else console.log('✅ สร้าง admin สำเร็จ id:', result.insertId)
+      if (err) {
+        console.error(err)
+      } else {
+        console.log('✅ สร้าง admin สำเร็จ id:', result.insertId)
+      }
       db.end()
     }
   )

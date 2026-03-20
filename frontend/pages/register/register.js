@@ -1,4 +1,3 @@
-// ถ้า login อยู่แล้ว ไม่ต้องสมัครใหม่ → ไปหน้าร้านเลย
 if (api.auth.isLoggedIn()) {
   location.href = "../Stores pages/Stores_pages.html"
 }

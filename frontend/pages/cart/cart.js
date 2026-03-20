@@ -10,7 +10,7 @@ function saveCart(cart) {
   localStorage.setItem("cart", JSON.stringify(cart))
 }
 
-// ── render ตะกร้า ─────────────────────────────────────────────
+// render ตะกร้า
 function renderCart() {
   const cart = getCart()
   const user = api.auth.getUser()

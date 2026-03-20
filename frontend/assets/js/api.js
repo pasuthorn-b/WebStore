@@ -12,7 +12,9 @@ async function request(method, path, body = null) {
     }
   }
 
-  if (body) options.body = JSON.stringify(body)
+  if (body) {
+    options.body = JSON.stringify(body)
+  }
 
   const res = await fetch(BASE_URL + path, options)
 
@@ -20,6 +22,7 @@ async function request(method, path, body = null) {
  if (res.status === 401) {
   localStorage.removeItem("token")
   localStorage.removeItem("user")
+  
 
   const data = await res.json()
   // ถ้ากำลัง login อยู่ (ยังไม่มี token) → throw error ให้ catch จัดการ
@@ -34,7 +37,9 @@ async function request(method, path, body = null) {
 
   const data = await res.json()
 
-  if (!res.ok) throw new Error(data.error || "เกิดข้อผิดพลาด")
+  if (!res.ok) {
+    throw new Error(data.error || "เกิดข้อผิดพลาด")
+  }
   return data
 }
 
@@ -51,18 +56,27 @@ async function uploadImage(file) {
   })
 
   const data = await res.json()
-  if (!res.ok) throw new Error(data.error || "อัปโหลดไม่สำเร็จ")
+  if (!res.ok) {
+    throw new Error(data.error || "อัปโหลดไม่สำเร็จ")
+  } 
   return data // { url: "/uploads/xxx.jpg" }
 }
 
 // auth helpers
 function getUser() {
-  const raw = localStorage.getItem("user")
-  return raw ? JSON.parse(raw) : null
+  const user = localStorage.getItem("user")
+  if (user) {
+    return JSON.parse(user)
+  }
+  return null
 }
 
 function isLoggedIn() {
-  return !!localStorage.getItem("token")
+  const token = localStorage.getItem("token")
+  if (token) {
+    return true
+  }
+    return false
 }
 
 function saveSession(token, user) {
@@ -91,8 +105,8 @@ const api = {
       location.href = "../login/login.html"
     },
 
-    getUser,   
-    isLoggedIn,
+    getUser: getUser,
+    isLoggedIn: isLoggedIn
   },
 
   products: {

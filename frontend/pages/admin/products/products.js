@@ -1,7 +1,6 @@
 let editingId  = null
 let allProducts = []
 
-//escape special chars สำหรับ HTML/JS (ป้องกัน XSS เวลาส่งข้อมูลไปใน onclick)
 function esc(str) {
   return String(str)
     .replace(/&/g, "&amp;")
@@ -70,7 +69,7 @@ function renderProducts(products) {
   }).join("")
 }
 
-// ── ค้นหาสินค้า ───────────────────────────────────────────────
+//ค้นหาสินค้า
 function filterProducts() {
   const q = document.getElementById("search-prod").value.toLowerCase()
   const filtered = allProducts.filter(p =>
@@ -79,7 +78,7 @@ function filterProducts() {
   renderProducts(filtered)
 }
 
-// ── preview รูป ───────────────────────────────────────────────
+//preview รูป
 function previewImg() {
   const file = document.getElementById("p-img").files[0]
   if (!file) return
@@ -103,7 +102,7 @@ function previewImg() {
   reader.readAsDataURL(file)
 }
 
-// ── เอารูปออก ─────────────────────────────────────────────────
+//เอารูปออก
 function clearImg() {
   document.getElementById("p-img").value = ""
   document.getElementById("img-preview").style.display = "none"
@@ -111,7 +110,7 @@ function clearImg() {
   document.getElementById("clear-img-btn").style.display = "none"
 }
 
-// ── บันทึกสินค้า ──────────────────────────────────────────────
+//บันทึกสินค้า
 async function saveProduct() {
   const name  = document.getElementById("p-name").value.trim()
   const price = document.getElementById("p-price").value
@@ -121,10 +120,18 @@ async function saveProduct() {
   const file  = document.getElementById("p-img").files[0]
   const btn   = document.getElementById("save-btn")
   // validate
-  if (!name)  return showFormErr("กรุณากรอกชื่อสินค้า")
-  if (!price) return showFormErr("กรุณากรอกราคา")
-  if (+price < 0) return showFormErr("ราคาต้องไม่ติดลบ")
-  if (!file && !editingId) return showFormErr("กรุณาเลือกรูปสินค้า")
+  if (!name)  {
+    return showFormErr("กรุณากรอกชื่อสินค้า")
+  }
+  if (!price) {
+    return showFormErr("กรุณากรอกราคา")
+  }
+  if (+price < 0) {
+    return showFormErr("ราคาต้องไม่ติดลบ")
+  }
+  if (!file && !editingId) {
+    return showFormErr("กรุณาเลือกรูปสินค้า")
+  }
 
   clearFormErr()
 
@@ -194,13 +201,13 @@ function startEdit(id, name, price, stock, desc, cat, imgUrl, imgType) {
   window.scrollTo({ top: 0, behavior: "smooth" })
 }
 
-// ── ยกเลิกแก้ไข ───────────────────────────────────────────────
+//ยกเลิกแก้ไข
 function cancelEdit() {
   editingId = null
   clearForm()
 }
 
-// ── เคลียร์ฟอร์ม ──────────────────────────────────────────────
+//เคลียร์ฟอร์ม
 function clearForm() {
   editingId = null
   ;["p-name","p-price","p-stock","p-desc","p-cat"].forEach(id => {
@@ -213,9 +220,11 @@ function clearForm() {
   document.getElementById("cancel-btn").style.display = "none"
 }
 
-// ── ลบสินค้า ──────────────────────────────────────────────────
+//ลบสินค้า
 async function deleteProduct(id, name) {
-  if (!confirm(`ลบสินค้า "${name}" ใช่ไหม?\nการกระทำนี้ไม่สามารถย้อนกลับได้`)) return
+  if (!confirm(`ลบสินค้า "${name}" ใช่ไหม?\nไม่สามารถย้อนกลับได้นะ`)) { 
+    return 
+  }
   try {
     await api.products.remove(id)
     await loadProducts()
@@ -224,7 +233,7 @@ async function deleteProduct(id, name) {
   }
 }
 
-// ── form error helpers ────────────────────────────────────────
+//form error helpers
 function showFormErr(msg) {
   const el = document.getElementById("form-err")
   el.textContent = msg

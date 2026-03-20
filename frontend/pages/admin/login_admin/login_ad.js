@@ -2,7 +2,7 @@
 window.onload = () => {
   const user = api.auth.getUser()
   if (user?.role === "admin") {
-    location.href = "../index.html"
+    location.href = "../admin.html"
   }
 }
 
@@ -27,9 +27,9 @@ async function handleLogin() {
   try {
     const res = await api.auth.login({ email, password })
 
-    // เช็ค role — ต้องเป็น admin เท่านั้น
+    // เช็ค role ต้องเป็น admin เท่านั้น
     if (res.user.role !== "admin") {
-      api.auth.logout() // ล้าง token ทิ้ง ไม่ให้เก็บไว้
+      api.auth.logout()
       errEl.textContent = "บัญชีนี้ไม่มีสิทธิ์เข้าระบบแอดมิน"
       errEl.style.display = "block"
       btn.disabled = false
@@ -37,8 +37,8 @@ async function handleLogin() {
       return
     }
 
-    // เป็น admin → ไปหน้าจัดการเลย
-    location.href = "../index.html"
+    // เป็น admin ไปหน้าจัดการเลย
+    location.href = "../admin.html"
 
   } catch (err) {
     errEl.textContent = err.message || "อีเมลหรือรหัสผ่านไม่ถูกต้อง"
