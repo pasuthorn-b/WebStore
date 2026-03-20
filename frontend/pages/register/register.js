@@ -1,6 +1,6 @@
 // ถ้า login อยู่แล้ว ไม่ต้องสมัครใหม่ → ไปหน้าร้านเลย
 if (api.auth.isLoggedIn()) {
-  location.href = "../Stores pages/index.html"
+  location.href = "../Stores pages/Stores_pages.html"
 }
 
 // ── แสดง error ────────────────────────────────────────────────
@@ -58,7 +58,7 @@ async function handleRegister() {
     // 3. แจ้งสำเร็จ แล้วพาไปหน้าร้าน
     showSuccess("สมัครสมาชิกสำเร็จ! กำลังพาไปหน้าร้านค้า...")
     setTimeout(() => {
-      location.href = "../Stores pages/index.html"
+      location.href = "../Stores pages/Stores_pages.html"
     }, 1200)
 
   } catch (error) {

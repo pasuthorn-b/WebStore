@@ -17,17 +17,24 @@ async function request(method, path, body = null) {
   const res = await fetch(BASE_URL + path, options)
 
   // token หมดอายุ → logout อัตโนมัติ
-  if (res.status === 401) {
-    localStorage.removeItem("token")
-    localStorage.removeItem("user")
-    location.href = "/pages/login/index.html"
-    return
+ if (res.status === 401) {
+  localStorage.removeItem("token")
+  localStorage.removeItem("user")
+
+  const data = await res.json()
+  // ถ้ากำลัง login อยู่ (ยังไม่มี token) → throw error ให้ catch จัดการ
+  // ถ้า token หมดอายุ (มี token แต่ใช้ไม่ได้) → redirect
+
+  if (!token) {
+    throw new Error(data.error || "อีเมลหรือรหัสผ่านไม่ถูกต้อง")
   }
+  location.href = "../login/login.html"
+  return
+}
 
   const data = await res.json()
 
   if (!res.ok) throw new Error(data.error || "เกิดข้อผิดพลาด")
-
   return data
 }
 
@@ -87,7 +94,7 @@ const api = {
     // ออกจากระบบ → ลบ token + user แล้ว redirect ไป login
     logout: () => {
       clearSession()
-      location.href = "../login/index.html"
+      location.href = "../login/login.html"
     },
 
     getUser,      // ดึงข้อมูล user ปัจจุบัน → { id, name, email } หรือ null

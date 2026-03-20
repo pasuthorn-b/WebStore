@@ -350,7 +350,24 @@ app.post('/api/orders', (req, res) => {
       const itemRows = items.map(i => [orderId, i.productId || null, i.qty, i.price, i.name || null])
       db.query('INSERT INTO order_items (orderId,productId,qty,price,name) VALUES ?', [itemRows], (err2) => {
         if (err2) return sendError(res, err2)
-        return res.json({ id: orderId, customer, phone, address, userId, status: 'รอยืนยัน', total, createdAt, items })
+
+        // ── หัก stock 
+        const updates = items
+          .filter(i => i.productId)
+          .map(i => new Promise((resolve, reject) => {
+            db.query(
+              'UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?',
+              [i.qty, i.productId, i.qty],
+              (err3) => err3 ? reject(err3) : resolve()
+            )
+          }))
+
+        Promise.all(updates)
+          .then(() => res.json({
+            id: orderId, customer, phone, address,
+            userId, status: 'รอยืนยัน', total, createdAt, items
+          }))
+          .catch(err3 => sendError(res, err3))
       })
     }
   )

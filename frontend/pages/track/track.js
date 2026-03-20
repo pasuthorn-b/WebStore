@@ -56,7 +56,7 @@ async function doTrack() {
         <div style="text-align:right;font-weight:700;font-size:15px">
           รวม ฿${order.total.toLocaleString()}
         </div>
-        <a href="../Stores pages/index.html" style="display:block;margin-top:14px">
+        <a href="../Stores pages/Stores_pages.html" style="display:block;margin-top:14px">
           <button class="btn btn-green">กลับร้านค้า</button>
         </a>
       </div>`

@@ -160,7 +160,7 @@ async function saveProduct() {
     await loadProducts()
     // reload หน้าร้านใหม่อย่างสมบูรณ์
     setTimeout(() => {
-      window.open("../../Stores%20pages/index.html", "_self")
+      window.open("../../Storespages/Stores_pages.html", "_self")
     }, 800)
   } catch (err) {
     showFormErr(err.message || "บันทึกไม่สำเร็จ")

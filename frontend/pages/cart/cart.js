@@ -21,7 +21,7 @@ function renderCart() {
   const loginBanner = !user ? `
     <div class="alert alert-blue" style="margin-bottom:16px">
       <span>เข้าสู่ระบบเพื่อติดตามออเดอร์ได้ง่ายขึ้น</span>
-      <a href="../login/index.html">
+      <a href="../login/login.html">
         <button class="btn btn-green" style="width:auto;padding:5px 12px;font-size:12px">เข้าสู่ระบบ</button>
       </a>
     </div>` : ""
@@ -104,14 +104,14 @@ function renderCart() {
     </div>`
 }
 
-// ── ลบสินค้าออกจากตะกร้า ─────────────────────────────────────
+// ลบสินค้าออกจากตะกร้า 
 function removeItem(id) {
   let cart = getCart().filter(x => x.id !== id)
   saveCart(cart)
   renderCart()
 }
 
-// ── เปลี่ยนจำนวนสินค้า ────────────────────────────────────────
+// เปลี่ยนจำนวนสินค้าในตะกร้า
 function updateQty(id, delta) {
   let cart = getCart()
   const item = cart.find(x => x.id === id)
@@ -122,7 +122,7 @@ function updateQty(id, delta) {
   renderCart()
 }
 
-// ── สั่งซื้อ ──────────────────────────────────────────────────
+// สั่งซื้อ
 async function placeOrder() {
   const name    = document.getElementById("name").value.trim()
   const phone   = document.getElementById("phone").value.trim()
@@ -151,6 +151,7 @@ async function placeOrder() {
         productId: x.id,
         qty: x.qty,
         price: x.price,
+        name: x.name
       }))
     })
 
@@ -159,7 +160,7 @@ async function placeOrder() {
 
     // ไปหน้า success
     localStorage.setItem("lastOrderId", order.id)
-    location.href = "../track/index.html?id=" + order.id
+    location.href = "../track/track.html?id=" + order.id
 
   } catch (err) {
     errEl.textContent = err.message || "สั่งซื้อไม่สำเร็จ กรุณาลองใหม่"

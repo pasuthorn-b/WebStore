@@ -5,7 +5,7 @@ const STATUS_COLOR = {
 
 window.onload = async () => {
   if (!api.auth.isLoggedIn()) {
-    location.href = "../login/index.html"
+    location.href = "../login/login.html"
     return
   }
 
@@ -22,7 +22,7 @@ window.onload = async () => {
         <div class="empty">
           <div class="empty-icon">📦</div>
           ยังไม่มีออเดอร์
-          <a href="../Stores pages/index.html" style="display:block;margin-top:12px">
+          <a href="../Stores pages/Stores_pages.html" style="display:block;margin-top:12px">
             <button class="btn btn-green">เลือกซื้อสินค้า</button>
           </a>
         </div>`

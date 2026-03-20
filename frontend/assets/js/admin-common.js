@@ -51,7 +51,7 @@ function renderAdminNav(activeTab) {
     <div class="navbar-actions">
       <span style="font-size:13px;color:#888">👤 ${user?.name || ""}</span>
       ${tabHtml}
-      <a href="../../Stores pages/index.html">
+      <a href="../../Stores pages/Stores_pages.html">
         <button class="btn btn-blue">← ร้านค้า</button>
       </a>
       <button class="btn" onclick="adminLogout()"

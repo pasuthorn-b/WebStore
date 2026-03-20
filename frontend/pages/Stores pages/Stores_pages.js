@@ -33,7 +33,7 @@ function renderAuthArea() {
             <div style="font-weight:600;font-size:13px">${user.name}</div>
             <div style="font-size:11px;color:#999">${user.email}</div>
           </div>
-          <button onclick="location.href='../user_order/index.html'"
+          <button onclick="location.href='../user_order/user_order.html'"
             style="width:100%;padding:10px 14px;border:none;background:none;
             cursor:pointer;text-align:left;font-size:13px;display:flex;align-items:center;gap:8px">
             <img src="https://icons.veryicon.com/png/o/miscellaneous/classic-car-maintenance-dsm/purchase-order-15.png"
@@ -52,8 +52,8 @@ function renderAuthArea() {
       </div>`
   } else {
     area.innerHTML = `
-      <a href="../login/index.html">
-        <button class="btn btn-green" style="width:auto;padding:6px 14px">Login</button>
+      <a href="../login/login.html">
+        <button class="btn btn-green" style="width:auto;padding:6px 14px">เข้าสู่ระบบ</button>
       </a>`
   }
 }

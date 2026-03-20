@@ -1,4 +1,4 @@
-if (api.auth.isLoggedIn()) location.href = "../Stores pages/index.html"
+if (api.auth.isLoggedIn()) location.href = "../Stores pages/Stores_pages.html"
 
 async function handleLogin() {
   const email    = document.getElementById("email").value.trim()
@@ -19,7 +19,7 @@ async function handleLogin() {
 
   try {
     await api.auth.login({ email, password })
-    location.href = "../Stores pages/index.html"
+    location.href = "../Stores pages/Stores_pages.html"
   } catch (err) {
     errEl.textContent = err.message || "อีเมลหรือรหัสผ่านไม่ถูกต้อง"
     errEl.style.display = "block"
