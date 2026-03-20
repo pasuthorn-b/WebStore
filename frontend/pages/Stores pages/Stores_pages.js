@@ -1,11 +1,10 @@
-// ── โหลดหน้า ──────────────────────────────────────────────────
 window.onload = async () => {
   renderAuthArea()
   updateCartBadge()
   await loadProducts()
 }
 
-// ── แสดงปุ่ม login หรือ dropdown ชื่อ ─────────────────────────
+// แสดงปุ่ม login หรือ dropdown ชื่อ
 function renderAuthArea() {
   const user = api.auth.getUser()
   const area = document.getElementById("auth-area")
@@ -71,7 +70,7 @@ function handleLogout() {
   api.auth.logout()
 }
 
-// ── อัปเดตตัวเลขในตะกร้า ──────────────────────────────────────
+// อัปเดตตัวเลขในตะกร้า
 function updateCartBadge() {
   const cart = JSON.parse(localStorage.getItem("cart") || "[]")
   const count = cart.reduce((s, x) => s + x.qty, 0)
@@ -79,7 +78,7 @@ function updateCartBadge() {
   el.textContent = count > 0 ? count : ""
 }
 
-// ── โหลดสินค้า ────────────────────────────────────────────────
+// โหลดสินค้า
 async function loadProducts() {
   const grid = document.getElementById("product-grid")
   try {
@@ -109,7 +108,7 @@ async function loadProducts() {
             <span class="qty-value" id="qty-${p.id}">1</span>
             <button class="qty-btn" onclick="changeQty(${p.id}, 1)" data-max="${p.stock}">+</button>
           </div>` : ""}
-          <button class="btn btn-green"
+          <button class="btn ${p.stock === 0 ? "btn-redout" : "btn-green"}"
             id="add-btn-${p.id}"
             onclick="addToCart(${p.id}, '${p.name}', ${p.price}, '${p.imgType === "url" ? "http://localhost:4000" + p.imgUrl : p.img}')"
             ${p.stock === 0 ? "disabled" : ""}>
@@ -124,7 +123,7 @@ async function loadProducts() {
   }
 }
 
-// ── เปลี่ยนจำนวน ──────────────────────────────────────────────
+//เปลี่ยนจำนวนสินค้า
 function changeQty(id, delta) {
   const el = document.getElementById("qty-" + id)
   const maxBtn = document.querySelector(`.qty-btn[onclick="changeQty(${id}, 1)"]`)
@@ -137,7 +136,7 @@ function changeQty(id, delta) {
   if (addBtn) addBtn.textContent = `+ ใส่ตะกร้า`
 }
 
-// ── ใส่ตะกร้า ─────────────────────────────────────────────────
+// ใส่ตะกร้า
 function addToCart(id, name, price, img) {
   const qty = parseInt(document.getElementById("qty-" + id)?.textContent || 1)
 
@@ -161,7 +160,7 @@ function addToCart(id, name, price, img) {
   }, 1500)
 }
 
-// ── ปิด dropdown เมื่อคลิกนอก ─────────────────────────────────
+// ปิด dropdown เมื่อคลิกนอก
 document.addEventListener("click", e => {
   const menu = document.getElementById("profile-menu")
   if (menu && !e.target.closest("[onclick='toggleProfileMenu()']")) {
