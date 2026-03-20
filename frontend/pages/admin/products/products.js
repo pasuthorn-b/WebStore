@@ -1,7 +1,7 @@
 let editingId  = null
 let allProducts = []
 
-// ── escape special chars สำหรับ HTML/JS ─────────────────────
+//escape special chars สำหรับ HTML/JS (ป้องกัน XSS เวลาส่งข้อมูลไปใน onclick)
 function esc(str) {
   return String(str)
     .replace(/&/g, "&amp;")
@@ -17,7 +17,7 @@ window.onload = async () => {
   await loadProducts()
 }
 
-// ── โหลดสินค้า ────────────────────────────────────────────────
+// โหลดสินค้า
 async function loadProducts() {
   const listEl = document.getElementById("products-list")
   listEl.innerHTML = `<div class="loading">⏳ กำลังโหลด...</div>`
@@ -30,7 +30,7 @@ async function loadProducts() {
   }
 }
 
-// ── render การ์ดสินค้า ────────────────────────────────────────
+//render การ์ดสินค้า
 function renderProducts(products) {
   const listEl = document.getElementById("products-list")
 
@@ -160,7 +160,7 @@ async function saveProduct() {
     await loadProducts()
     // reload หน้าร้านใหม่อย่างสมบูรณ์
     setTimeout(() => {
-      window.open("../../Storespages/Stores_pages.html", "_self")
+      window.open("../../Stores pages/Stores_pages.html", "_self")
     }, 800)
   } catch (err) {
     showFormErr(err.message || "บันทึกไม่สำเร็จ")
@@ -170,7 +170,7 @@ async function saveProduct() {
   }
 }
 
-// ── เริ่มแก้ไข ────────────────────────────────────────────────
+//เริ่มแก้ไข
 function startEdit(id, name, price, stock, desc, cat, imgUrl, imgType) {
   editingId = id
   document.getElementById("p-name").value  = name

@@ -9,7 +9,7 @@ const STATUS_COLOR = {
 window.onload = () => {
   // ถ้ามาจากหน้า cart จะมี ?id= ใน URL
   const params = new URLSearchParams(location.search)
-  const id = params.get("id") || localStorage.getItem("lastOrderId") || ""
+  const id = params.get("id") || ""
   if (id) {
     document.getElementById("track-input").value = id
     doTrack()
