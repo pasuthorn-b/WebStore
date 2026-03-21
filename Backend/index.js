@@ -7,6 +7,7 @@ const fs       = require('fs')
 const bcrypt   = require('bcryptjs')
 const jwt      = require('jsonwebtoken')
 
+//สร้าง server
 const app = express()
 app.use(cors())
 app.use(express.json())
@@ -17,11 +18,12 @@ const JWT_SECRET = process.env.JWT_SECRET || 'myshop_secret_key_2026'
 const FRONTEND_DIR = path.join(__dirname, '..', 'frontend')
 app.use(express.static(FRONTEND_DIR))
 
-// upload
+// uploads
 const UPLOAD_DIR = path.join(__dirname, 'uploads')
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true })
 app.use('/uploads', express.static(UPLOAD_DIR))
 
+//setting uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, UPLOAD_DIR),
   filename:    (req, file, cb) => {
@@ -30,6 +32,7 @@ const storage = multer.diskStorage({
     cb(null, name)
   }
 })
+//Limit file size and type of flie
 const upload = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // max 5MB
@@ -50,8 +53,11 @@ const db = mysql.createConnection({
   multipleStatements: true
 })
 
+//Connect db
 db.connect((err) => {
-  if (err) { console.error('MySQL connect error:', err); process.exit(1) }
+  if (err) { 
+    console.error('MySQL connect error:', err); process.exit(1) 
+  }
   console.log('Connected to MySQL!')
 
   const schema = `
@@ -98,21 +104,26 @@ db.connect((err) => {
     );
   `
   db.query(schema, (err) => {
-    if (err) console.error('Schema error:', err)
-    else console.log('Database schema ready.')
+    if (err) {
+      console.error('Schema error:', err)
+    } else {
+      console.log('Database schema ready.')
+    }
   })
 })
 
-// helpers
+// send error to frontend
 const sendError = (res, err, status = 500) => {
   console.error(err)
   return res.status(status).json({ error: err.message || err.toString() })
 }
 
-// middleware เช็ค JWT
+// middleware เช็ค login user
 const requireAuth = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1]
-  if (!token) return res.status(401).json({ error: 'กรุณาเข้าสู่ระบบ' })
+  if (!token) {
+    return res.status(401).json({ error: 'กรุณาเข้าสู่ระบบ' })
+  }
   try {
     req.user = jwt.verify(token, JWT_SECRET)
     next()
@@ -124,11 +135,14 @@ const requireAuth = (req, res, next) => {
 // middleware เช็ค admin
 const requireAdmin = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1]
-  if (!token) return res.status(401).json({ error: 'กรุณาเข้าสู่ระบบ' })
+  if (!token) {
+    return res.status(401).json({ error: 'กรุณาเข้าสู่ระบบ' })
+  }
   try {
     req.user = jwt.verify(token, JWT_SECRET)
-    if (req.user.role !== 'admin')
+    if (req.user.role !== 'admin'){
       return res.status(403).json({ error: 'ไม่มีสิทธิ์เข้าถึง' })
+    }
     next()
   } catch {
     return res.status(401).json({ error: 'Token ไม่ถูกต้องหรือหมดอายุ' })
@@ -136,14 +150,14 @@ const requireAdmin = (req, res, next) => {
 }
 
 //AUTH API 
-// สมัครสมาชิก (Register)
+//Register
 app.post('/api/auth/register', async (req, res) => {
 
   const { name, email, phone, password } = req.body
 
-  if (!name || !email || !phone || !password)
+  if (!name || !email || !phone || !password){
     return res.status(400).json({ error: 'ข้อมูลไม่ครบ' })
-
+  }
   db.query('SELECT id FROM users WHERE email = ?', [email], async (err, rows) => {
     if (err){
       return sendError(res, err)
@@ -177,7 +191,7 @@ app.post('/api/auth/register', async (req, res) => {
 })
 
 
-// เข้าสู่ระบบ (Login)
+//Login
 app.post('/api/auth/login', (req, res) => {
 
   const { email, password } = req.body
@@ -205,7 +219,6 @@ app.post('/api/auth/login', (req, res) => {
         if (!match){
           return res.status(401).json({ error: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' })
         }
-
         const token = jwt.sign(
           { id: user.id, name: user.name, email: user.email, role: user.role },
           JWT_SECRET,
@@ -233,7 +246,6 @@ app.get('/api/users', requireAdmin, (req, res) => {
 
 
 // PRODUCTS
-
 // อัปโหลดรูปสินค้า (ต้อง login เป็น admin ก่อน)
 app.post('/api/products/upload', requireAdmin, upload.single('image'), (req, res) => {
 
@@ -310,12 +322,12 @@ app.put('/api/products/:id', requireAdmin, (req, res) => {
       if (err) {
         return sendError(res, err)
       }
-
+      // ดึงข้อมูลสินค้าอัปเดตล่าสุดกลับไปให้ frontend
       db.query('SELECT * FROM products WHERE id = ?', [req.params.id], (err2, rows) => {
         if (err2) {
           return sendError(res, err2)
         }
-
+        //ไม่มีสินค้านี้ ให้ส่งerror กลับไป
         if (rows.length === 0) {
           return res.status(404).json({ error: 'ไม่พบสินค้า' })
         }
@@ -328,9 +340,8 @@ app.put('/api/products/:id', requireAdmin, (req, res) => {
 
 // ลบสินค้า (ต้องเป็น admin)
 app.delete('/api/products/:id', requireAdmin, (req, res) => {
-
+  
   db.query('DELETE FROM products WHERE id = ?', [req.params.id], (err, result) => {
-
     if (err) {
       return sendError(res, err)
     }
@@ -343,14 +354,18 @@ app.delete('/api/products/:id', requireAdmin, (req, res) => {
 
 
 //  ORDERS
-
 // ดึงออเดอร์ของ user ที่ login อยู่
 app.get('/api/orders/my', requireAuth, (req, res) => {
   const userId = req.user.id
   db.query('SELECT * FROM orders WHERE userId = ? ORDER BY createdAt DESC', [userId], (err, orders) => {
-    if (err) return sendError(res, err)
-    if (orders.length === 0) return res.json([])
+    if (err) {
+      return sendError(res, err)
+    }
+    if (orders.length === 0) {
+      return res.json([])
+    }
 
+  
     const ids = orders.map(o => o.id)
     db.query(`
       SELECT oi.id, oi.orderId, oi.productId, oi.qty, oi.price,
@@ -359,7 +374,10 @@ app.get('/api/orders/my', requireAuth, (req, res) => {
       LEFT JOIN products p ON oi.productId = p.id
       WHERE oi.orderId IN (?)
     `, [ids], (err2, items) => {
-      if (err2) return sendError(res, err2)
+      if (err2) {
+        return sendError(res, err2)
+      }
+      //รวม order กับ items เข้าด้วยกัน
       const result = orders.map(o => ({
         ...o,
         items: items.filter(i => i.orderId === o.id)
@@ -372,10 +390,15 @@ app.get('/api/orders/my', requireAuth, (req, res) => {
 // ดึงออเดอร์ทั้งหมด (admin)
 app.get('/api/orders', requireAdmin, (req, res) => {
   db.query('SELECT * FROM orders ORDER BY createdAt DESC', (err, orders) => {
-    if (err) return sendError(res, err)
-    if (orders.length === 0) return res.json([])
+    if (err){
+      return sendError(res, err)
+    }
+    if (orders.length === 0) {
+      return res.json([])
+    }
 
     const ids = orders.map(o => o.id)
+    //ดึงproductในทุกorder
     db.query(`
       SELECT oi.id, oi.orderId, oi.productId, oi.qty, oi.price,
         COALESCE(oi.name, p.name) as name
@@ -383,7 +406,10 @@ app.get('/api/orders', requireAdmin, (req, res) => {
       LEFT JOIN products p ON oi.productId = p.id
       WHERE oi.orderId IN (?)
     `, [ids], (err2, items) => {
-      if (err2) return sendError(res, err2)
+      if (err2) {
+        return sendError(res, err2)
+      }
+      //รวม order กับสินค้าเข้าด้วยกัน
       const result = orders.map(o => ({
         ...o,
         items: items.filter(i => i.orderId === o.id)
@@ -442,7 +468,7 @@ app.post('/api/orders', (req, res) => {
           return sendError(res, err2)
         }
 
-        // ── หัก stock 
+        // หัก stock 
         const updates = items
           .filter(i => i.productId)
           .map(i => new Promise((resolve, reject) => {
@@ -477,11 +503,10 @@ app.patch('/api/orders/:id/status', requireAdmin, (req, res) => {
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: 'ไม่พบคำสั่งซื้อ' })
     }
-    return res.json({ ok: true })
+      return res.json({ ok: true })
   })
 })
 //404 fallback
 app.use((req, res) => res.status(404).json({ error: 'ไม่พบ API endpoint' }))
-
 const PORT = 4000
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))

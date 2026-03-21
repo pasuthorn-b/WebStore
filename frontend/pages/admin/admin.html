@@ -9,7 +9,7 @@
   <script>
     const user = JSON.parse(localStorage.getItem("user") || "null")
     if (!user || user.role !== "admin") {
-      location.href = "./login_admin/login_ad.html"
+      location.href = "../login_admin/login_admin.html"
     } else {
       location.href = "./orders/orders.html"
     }

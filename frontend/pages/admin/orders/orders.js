@@ -15,7 +15,7 @@ window.onload = async () => {
   await loadOrders()
 }
 
-// ── โหลดออเดอร์ ───────────────────────────────────────────────
+//โหลดออเดอร์
 async function loadOrders() {
   const listEl  = document.getElementById("orders-list")
   const statsEl = document.getElementById("order-stats")
@@ -45,7 +45,7 @@ async function loadOrders() {
   }
 }
 
-// ── render ออเดอร์ ────────────────────────────────────────────
+//render ออเดอร์
 function renderOrders(orders) {
   const listEl = document.getElementById("orders-list")
 
@@ -57,7 +57,7 @@ function renderOrders(orders) {
   listEl.innerHTML = orders.map(o => orderCard(o)).join("")
 }
 
-// ── กรองออเดอร์ ───────────────────────────────────────────────
+//กรองออเดอร์
 function filterOrders() {
   const q      = document.getElementById("search-order").value.toLowerCase()
   const status = document.getElementById("filter-status").value
@@ -74,7 +74,7 @@ function filterOrders() {
   renderOrders(filtered)
 }
 
-// ── สร้าง card ออเดอร์ ────────────────────────────────────────
+// สร้าง card ออเดอร์
 function orderCard(o) {
   const c = STATUS_COLOR[o.status] || "#888"
 
@@ -129,7 +129,7 @@ function orderCard(o) {
     </div>`
 }
 
-// ── อัปเดตสถานะ ───────────────────────────────────────────────
+// อัปเดตสถานะ
 async function updateStatus(orderId, status) {
   try {
     await api.orders.updateStatus(orderId, status)

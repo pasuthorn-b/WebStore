@@ -2,7 +2,9 @@ let allMembers = []
 let allOrders  = []
 
 window.onload = async () => {
-  if (!requireAdmin()) return
+  if (!requireAdmin()) {
+    return
+  }
   renderAdminNav("members")
   await loadMembers()
 }
@@ -21,9 +23,10 @@ async function loadMembers() {
     // stats
     const memOrders = allOrders.filter(o => o.userId)
     const memRev = memOrders.reduce((s,o) => s + Number(o.total), 0)
-    const avgOrder  = allMembers.length > 0
-      ? Math.round(memRev / allMembers.length)
-      : 0
+    let avgOrder  = 0
+    if (allMembers.length > 0) {
+        avgOrder = Math.round(memRev / allMembers.length)
+      }
 
     statsEl.innerHTML = `
       ${statCard(allMembers.length, "สมาชิกทั้งหมด")}

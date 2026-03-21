@@ -1,9 +1,9 @@
 const BASE_URL = "http://localhost:4000/api"
 
-// ส่ง request
+// send request
 async function request(method, path, body = null) {
   const token = localStorage.getItem("token")
-
+  //setting request
   const options = {
     method,
     headers: {
@@ -18,29 +18,25 @@ async function request(method, path, body = null) {
 
   const res = await fetch(BASE_URL + path, options)
 
-  // token หมดอายุ → logout อัตโนมัติ
+  // token หมดอายุ - logout อัตโนมัติ
  if (res.status === 401) {
   localStorage.removeItem("token")
   localStorage.removeItem("user")
-  
 
+  // ถ้าtoken หมดอายุ - ไปหน้า login
   const data = await res.json()
-  // ถ้ากำลัง login อยู่ (ยังไม่มี token) → throw error ให้ catch จัดการ
-  // ถ้า token หมดอายุ (มี token แต่ใช้ไม่ได้) → redirect
-
   if (!token) {
     throw new Error(data.error || "อีเมลหรือรหัสผ่านไม่ถูกต้อง")
   }
-  location.href = "../login/login.html"
-  return
+    location.href = "../login/login.html"
+    return
 }
-
+  //ถ้า res ไม่ ok ให้แสดง error
   const data = await res.json()
-
   if (!res.ok) {
     throw new Error(data.error || "เกิดข้อผิดพลาด")
   }
-  return data
+    return data
 }
 
 // upload รูป

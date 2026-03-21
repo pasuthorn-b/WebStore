@@ -31,7 +31,6 @@ function requireAdmin() {
 }
 
 // สร้าง Navbar 
-// activeTab = "orders" | "products" | "members"
 function renderAdminNav(activeTab) {
   const user = api.auth.getUser()
 
@@ -56,7 +55,7 @@ function renderAdminNav(activeTab) {
       <span style="font-size:13px;color:#888">👤 ${user?.name || ""}</span>
       ${tabHtml}
       <a href="../../Stores pages/Stores_pages.html">
-        <button class="btn btn-blue">← ร้านค้า</button>
+        <button class="btn btn-blue">← กลับ</button>
       </a>
       <button class="btn" onclick="adminLogout()"
         style="color:#ef4444;border-color:#ef444440">ออกจากระบบ</button>
@@ -72,7 +71,7 @@ function adminLogout() {
   }
 }
 
-// Helpers
+//stat card
 function statCard(num, label) {
   return `
     <div class="stat-card">
