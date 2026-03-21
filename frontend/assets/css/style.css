@@ -13,10 +13,6 @@ body {
   line-height: 1.6;
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
-}
 
 /*Layout*/
 .container {
@@ -180,8 +176,8 @@ textarea {
 /*Product Grid*/
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
 }
 .product-card {
   background: #fff;
@@ -190,7 +186,7 @@ textarea {
   padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 /*กรอบรูปสินค้า*/
 .product-img {
