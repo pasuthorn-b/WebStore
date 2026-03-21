@@ -18,7 +18,7 @@ async function main() {
       if (err) {
         console.error(err)
       } else {
-        console.log('✅ สร้าง admin สำเร็จ id:', result.insertId)
+        console.log('สร้าง admin สำเร็จ id:', result.insertId)
       }
       db.end()
     }
