@@ -151,7 +151,7 @@ async function saveProduct() {
       stock:    +stock || 0,
       desc,
       category: cat,
-      img:      "🎁",
+      img:      "",
       imgType,
       imgUrl,
     }
