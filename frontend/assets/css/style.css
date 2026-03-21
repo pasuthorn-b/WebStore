@@ -16,9 +16,9 @@ body {
 
 /*Layout*/
 .container {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 24px 16px;
+  max-width: 100%;
+  width: 100%;
+  padding: 0 20px;
 }
 
 .container-sm {
@@ -176,7 +176,7 @@ textarea {
 /*Product Grid*/
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 10px;
 }
 .product-card {
