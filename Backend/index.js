@@ -32,7 +32,7 @@ const storage = multer.diskStorage({
     cb(null, name)
   }
 })
-//จำกัดขนาดไฟล์และชนิดไฟล์ที่
+//จำกัดขนาดไฟล์และชนิดไฟล์
 const upload = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // max 5MB
